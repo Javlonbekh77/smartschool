@@ -1,13 +1,16 @@
-import { Button } from "@/components/ui/button";
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter
-} from "@/components/ui/card";
-import { PlusCircle } from "lucide-react";
+  CardFooter,
+} from '@/components/ui/card';
+import { PlusCircle } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -16,56 +19,80 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { EXPENSES } from "@/lib/data";
+import { EXPENSES as initialExpenses } from '@/lib/data';
+import type { Expense } from '@/lib/types';
+import { AddExpenseDialog } from '@/components/dialogs/add-expense-dialog';
 
 export default function ExpensesPage() {
-  const expenses = EXPENSES.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const [expenses, setExpenses] = useState<Expense[]>(initialExpenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
+  const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
+    const expenseToAdd: Expense = {
+      id: `exp${Date.now()}`,
+      ...newExpense,
+    };
+    setExpenses(prev => [expenseToAdd, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-4">
-          <div>
-            <CardTitle className="font-headline">Xarajatlar</CardTitle>
-            <CardDescription>
-              Track all operational expenses.
-            </CardDescription>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-4">
+            <div>
+              <CardTitle className="font-headline">Xarajatlar</CardTitle>
+              <CardDescription>
+                Track all operational expenses.
+              </CardDescription>
+            </div>
+            <div className="ml-auto">
+              <Button size="sm" className="gap-1" onClick={() => setIsAddDialogOpen(true)}>
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Add Expense
+                </span>
+              </Button>
+            </div>
           </div>
-          <div className="ml-auto">
-            <Button size="sm" className="gap-1">
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Add Expense
-              </span>
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {expenses.map((expense) => (
-              <TableRow key={expense.id}>
-                <TableCell className="font-medium">{new Date(expense.date).toLocaleDateString()}</TableCell>
-                <TableCell>{expense.description}</TableCell>
-                <TableCell className="text-right">${expense.amount.toLocaleString()}</TableCell>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-       <CardFooter>
-        <div className="font-bold">Total Expenses: ${totalExpenses.toLocaleString()}</div>
-      </CardFooter>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {expenses.map((expense) => (
+                <TableRow key={expense.id}>
+                  <TableCell className="font-medium">
+                    {new Date(expense.date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>{expense.description}</TableCell>
+                  <TableCell className="text-right">
+                    ${expense.amount.toLocaleString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+        <CardFooter>
+          <div className="font-bold">
+            Total Expenses: ${totalExpenses.toLocaleString()}
+          </div>
+        </CardFooter>
+      </Card>
+      <AddExpenseDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onAddExpense={handleAddExpense}
+      />
+    </>
   );
 }
