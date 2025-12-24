@@ -1,6 +1,6 @@
 'use client';
 import { STAFF as initialStaff } from '@/lib/data';
-import { notFound, useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Briefcase, DollarSign, Clock } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Staff } from '@/lib/types';
 
 // This would typically come from a state management solution or props
@@ -28,14 +28,16 @@ export default function StaffProfilePage() {
   const [staffList, setStaffList] = useState(initialStaff);
   const staffMember = findStaffMember(staffId, staffList);
 
-  if (!staffMember) {
-    // If the staff member is not found, it might have been deleted.
-    // Redirect to the staff list page.
-    // In a real app, you might show a "not found" message before redirecting.
-    if (typeof window !== 'undefined') {
-       router.push('/staff');
+  useEffect(() => {
+    if (!staffMember) {
+      // If the staff member is not found, it might have been deleted.
+      // Redirect to the staff list page.
+      router.push('/staff');
     }
-    return null; // Render nothing while redirecting
+  }, [staffMember, router]);
+
+  if (!staffMember) {
+    return null; // Render nothing while redirecting or loading
   }
   
   const calculateSalary = () => {
