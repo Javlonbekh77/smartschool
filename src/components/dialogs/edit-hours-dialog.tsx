@@ -51,6 +51,7 @@ export function EditHoursDialog({
     handleSubmit,
     reset,
     formState: { errors },
+    replace,
   } = useForm<HoursFormData>({
     resolver: zodResolver(hoursSchema),
     defaultValues: {
@@ -58,7 +59,7 @@ export function EditHoursDialog({
     },
   });
 
-  const { fields, replace } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "days",
   });
