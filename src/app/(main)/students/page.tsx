@@ -38,10 +38,9 @@ export default function StudentsPage() {
     setSelectedStudent(null);
   };
 
-  const handleAddStudent = (newStudent: Omit<Student, 'id' | 'balance' | 'isArchived' | 'avatarUrl'>) => {
+  const handleAddStudent = (newStudent: Omit<Student, 'id' | 'isArchived' | 'avatarUrl'>) => {
     const studentToAdd: Student = {
       id: `stu${Date.now()}`,
-      balance: 0,
       isArchived: false,
       avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
       ...newStudent

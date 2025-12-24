@@ -2,7 +2,7 @@ export type Student = {
   id: string;
   fullName: string;
   grade: number;
-  dateOfBirth: string;
+  enrollmentDate: string;
   balance: number;
   monthlyFee: number;
   isArchived: boolean;

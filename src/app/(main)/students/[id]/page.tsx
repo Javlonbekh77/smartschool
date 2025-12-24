@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { GraduationCap, Cake, DollarSign, TrendingUp } from 'lucide-react';
-import { differenceInYears } from 'date-fns';
+import { GraduationCap, Calendar, DollarSign, TrendingUp } from 'lucide-react';
+import { format } from 'date-fns';
 
 export default function StudentProfilePage({ params }: { params: { id: string } }) {
   const student = STUDENTS.find((s) => s.id === params.id);
@@ -18,8 +18,6 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
   if (!student) {
     notFound();
   }
-
-  const age = differenceInYears(new Date(), new Date(student.dateOfBirth));
 
   return (
     <Card>
@@ -44,10 +42,10 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Cake className="h-6 w-6 text-muted-foreground" />
+            <Calendar className="h-6 w-6 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Yoshi</p>
-              <p className="font-semibold">{age} yosh</p>
+              <p className="text-sm text-muted-foreground">Ro'yxatdan o'tgan sana</p>
+              <p className="font-semibold">{format(new Date(student.enrollmentDate), 'PPP')}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
