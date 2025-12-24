@@ -1,9 +1,9 @@
 'use client';
 import * as React from 'react';
 import {
-  CaretSortIcon,
-  ChevronDownIcon,
-} from '@radix-ui/react-icons';
+  ChevronsUpDown,
+  ChevronDown,
+} from 'lucide-react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -61,7 +61,7 @@ const columns: ColumnDef<Student>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Grade
-          <CaretSortIcon className="ml-2 h-4 w-4" />
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
@@ -76,7 +76,7 @@ const columns: ColumnDef<Student>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Balance
-          <CaretSortIcon className="ml-2 h-4 w-4" />
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
         </Button>
       </div>
     ),
@@ -173,7 +173,7 @@ export function StudentTable({ data }: { data: Student[] }) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
