@@ -18,8 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { STAFF as initialStaff, POSITIONS } from '@/lib/data';
-import type { Staff } from '@/lib/types';
+import { STAFF as initialStaff, POSITIONS, ATTENDANCE } from '@/lib/data';
+import type { Staff, Attendance } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -30,6 +30,8 @@ import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-ro
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<Staff[]>(initialStaff);
+  const [attendance, setAttendance] = useState<Attendance[]>(ATTENDANCE);
+
   const [dialogState, setDialogState] = useState({
     add: false,
     edit: false,
@@ -46,20 +48,31 @@ export default function StaffPage() {
     setDialogState(prev => ({ ...prev, [dialog]: false }));
     setSelectedStaff(null);
   };
-
+  
   const calculateSalary = (member: Staff) => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    
+    const memberAttendance = attendance.filter(a => 
+        a.staffId === member.id &&
+        new Date(a.date).getMonth() === currentMonth &&
+        new Date(a.date).getFullYear() === currentYear
+    );
+
     if (member.position.type === 'monthly') {
-      return member.salary;
+      // Pay full salary if they worked at least once this month
+      return memberAttendance.length > 0 ? member.position.rate : 0;
     }
-    if (member.position.type === 'hourly' && member.hoursWorked) {
-      const totalHours = Object.values(member.hoursWorked).reduce(
-        (sum, h) => sum + h,
-        0
-      );
-      return totalHours * 4 * member.position.rate; // Assuming 4 weeks in a month
+    
+    if (member.position.type === 'hourly') {
+      const totalHours = memberAttendance.reduce((sum, a) => sum + a.hours, 0);
+      return totalHours * member.position.rate;
     }
+
     return 0;
   };
+
 
   const handleAddStaff = (newStaff: Omit<Staff, 'id' | 'avatarUrl'>) => {
     const staffToAdd: Staff = {
@@ -72,11 +85,23 @@ export default function StaffPage() {
     closeDialog('add');
   };
 
-  const handleUpdateStaff = (staffId: string, data: Omit<Staff, 'id' | 'avatarUrl'>) => {
+  const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl'>>) => {
     const staffIndex = initialStaff.findIndex(s => s.id === staffId);
     if (staffIndex !== -1) {
       const currentAvatar = initialStaff[staffIndex].avatarUrl;
-      initialStaff[staffIndex] = { ...initialStaff[staffIndex], ...data, avatarUrl: currentAvatar, id: staffId };
+      const position = data.positionId ? POSITIONS.find(p => p.id === data.positionId) : initialStaff[staffIndex].position;
+      
+      if (!position) return;
+
+      const updatedStaff: Staff = {
+        ...initialStaff[staffIndex],
+        ...data,
+        position,
+        id: staffId,
+        avatarUrl: currentAvatar,
+      };
+
+      initialStaff[staffIndex] = updatedStaff;
     }
     setStaff([...initialStaff]);
     closeDialog('edit');
@@ -122,7 +147,7 @@ export default function StaffPage() {
                 <TableHead>Position</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead className="text-right">
-                  Calculated Salary (Monthly)
+                  Calculated Salary (This Month)
                 </TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>

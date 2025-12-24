@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Position, Staff } from "@/lib/types";
-import { useState, useEffect } from "react";
 
 interface AddStaffDialogProps {
   isOpen: boolean;
@@ -28,14 +27,6 @@ interface AddStaffDialogProps {
 const staffSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   positionId: z.string().min(1, "Position is required"),
-  salary: z.coerce.number().optional(),
-  hoursWorked: z.object({
-    Mon: z.coerce.number().min(0).max(24),
-    Tue: z.coerce.number().min(0).max(24),
-    Wed: z.coerce.number().min(0).max(24),
-    Thu: z.coerce.number().min(0).max(24),
-    Fri: z.coerce.number().min(0).max(24),
-  }).optional(),
 });
 
 type StaffFormData = z.infer<typeof staffSchema>;
@@ -51,43 +42,19 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
     formState: { errors },
   } = useForm<StaffFormData>({
     resolver: zodResolver(staffSchema),
-    defaultValues: {
-      hoursWorked: { Mon: 8, Tue: 8, Wed: 8, Thu: 8, Fri: 8 }
-    }
   });
 
   const selectedPositionId = watch("positionId");
   const selectedPosition = positions.find(p => p.id === selectedPositionId);
 
-  useEffect(() => {
-    // Reset salary and hours when position changes
-    reset({ 
-      ...watch(), 
-      positionId: selectedPositionId, 
-      salary: undefined, 
-      hoursWorked: { Mon: 8, Tue: 8, Wed: 8, Thu: 8, Fri: 8 }
-    });
-  }, [selectedPositionId, reset, watch]);
-
 
   const onSubmit = (data: StaffFormData) => {
     const position = positions.find(p => p.id === data.positionId)!;
     
-    let newStaff: Omit<Staff, 'id' | 'avatarUrl'>;
-
-    if (position.type === 'monthly') {
-      newStaff = {
+    const newStaff: Omit<Staff, 'id' | 'avatarUrl'> = {
         fullName: data.fullName,
         position: position,
-        salary: data.salary || position.rate,
-      }
-    } else { // hourly
-      newStaff = {
-        fullName: data.fullName,
-        position: position,
-        hoursWorked: data.hoursWorked,
-      }
-    }
+    };
     
     onAddStaff(newStaff);
     reset();
@@ -132,30 +99,10 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
                 </Select>
                 {errors.positionId && <p className="col-span-4 text-red-500 text-sm text-right">{errors.positionId.message}</p>}
             </div>
-
-            {selectedPosition?.type === 'monthly' && (
-                 <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="salary" className="text-right">Salary (so'm)</Label>
-                    <Input id="salary" type="number" {...register("salary")} placeholder={`e.g. ${selectedPosition.rate}`} className="col-span-3" />
-                    {errors.salary && <p className="col-span-4 text-red-500 text-sm text-right">{errors.salary.message}</p>}
-                 </div>
-            )}
-             {selectedPosition?.type === 'hourly' && (
-                 <div className="space-y-4 rounded-md border p-4">
-                    <div className="flex justify-between items-center">
-                      <Label>Weekly Hours</Label>
-                      <p className="text-sm text-muted-foreground">{selectedPosition.rate.toLocaleString()} so'm/soat</p>
-                    </div>
-                    <div className="grid grid-cols-5 gap-2">
-                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map(day => (
-                        <div key={day} className="space-y-1">
-                           <Label htmlFor={`hours${day}`} className="text-xs">{day}</Label>
-                           <Input id={`hours${day}`} type="number" {...register(`hoursWorked.${day}`)} className="h-8" />
-                        </div>
-                      ))}
-                    </div>
-                     {errors.hoursWorked && <p className="text-red-500 text-sm text-right">Please enter valid hours (0-24).</p>}
-                 </div>
+            {selectedPosition && (
+              <div className="col-span-4 text-sm text-muted-foreground text-right">
+                {selectedPosition.type === 'monthly' ? `Monthly Salary: ${selectedPosition.rate.toLocaleString()} so'm` : `Hourly Rate: ${selectedPosition.rate.toLocaleString()} so'm`}
+              </div>
             )}
           </div>
           <DialogFooter>

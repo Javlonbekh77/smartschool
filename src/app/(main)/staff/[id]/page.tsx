@@ -1,5 +1,5 @@
 'use client';
-import { STAFF as initialStaff } from '@/lib/data';
+import { STAFF as initialStaff, ATTENDANCE as initialAttendance } from '@/lib/data';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Card,
@@ -10,46 +10,55 @@ import {
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, DollarSign, Clock } from 'lucide-react';
+import { Briefcase, DollarSign, Clock, CalendarDays } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import type { Staff } from '@/lib/types';
+import type { Staff, Attendance } from '@/lib/types';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
-// This would typically come from a state management solution or props
 const findStaffMember = (id: string, staffList: Staff[]) => staffList.find(s => s.id === id);
-
 
 export default function StaffProfilePage() {
   const router = useRouter();
   const params = useParams();
   const staffId = typeof params.id === 'string' ? params.id : '';
   
-  // In a real app, this would be a single fetch, not the whole list.
-  // We use state to simulate deletion/updates without a real backend.
   const [staffList, setStaffList] = useState(initialStaff);
+  const [attendance, setAttendance] = useState(initialAttendance);
   const staffMember = findStaffMember(staffId, staffList);
 
   useEffect(() => {
     if (!staffMember) {
-      // If the staff member is not found, it might have been deleted.
-      // Redirect to the staff list page.
       router.push('/staff');
     }
   }, [staffMember, router]);
 
   if (!staffMember) {
-    return null; // Render nothing while redirecting or loading
+    return null;
   }
   
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  
+  const memberAttendanceThisMonth = attendance.filter(a => 
+      a.staffId === staffMember.id &&
+      new Date(a.date).getMonth() === currentMonth &&
+      new Date(a.date).getFullYear() === currentYear
+  );
+
   const calculateSalary = () => {
     if (staffMember.position.type === 'monthly') {
-      return staffMember.salary;
+      return memberAttendanceThisMonth.length > 0 ? staffMember.position.rate : 0;
     }
-    if (staffMember.position.type === 'hourly' && staffMember.hoursWorked) {
-      const totalHours = Object.values(staffMember.hoursWorked).reduce((sum, h) => sum + h, 0);
-      return totalHours * 4 * staffMember.position.rate; // Assuming 4 weeks in a month
+    if (staffMember.position.type === 'hourly') {
+      const totalHours = memberAttendanceThisMonth.reduce((sum, h) => sum + h.hours, 0);
+      return totalHours * staffMember.position.rate;
     }
     return 0;
   }
+
+  const workedDays = memberAttendanceThisMonth.map(a => new Date(a.date));
 
   return (
     <Card>
@@ -81,36 +90,39 @@ export default function StaffProfilePage() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 md:col-span-2">
             <DollarSign className="h-6 w-6 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Hisoblangan oylik</p>
+              <p className="text-sm text-muted-foreground">Hisoblangan oylik ({format(today, 'MMMM')})</p>
               <p className="font-semibold">{calculateSalary()?.toLocaleString()} so'm</p>
             </div>
           </div>
         </div>
-        {staffMember.position.type === 'hourly' && staffMember.hoursWorked && (
-          <div className="max-w-2xl mx-auto mt-6">
-             <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Clock className="h-5 w-5" />
-                    Haftalik ish soatlari
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                   <div className="font-semibold flex justify-around gap-2 flex-wrap">
-                      {Object.entries(staffMember.hoursWorked).map(([day, hours]) => (
-                        <div key={day} className="flex flex-col items-center p-2 rounded-md">
-                           <p className="text-sm text-muted-foreground">{day}</p>
-                           <p className="text-lg font-bold">{hours} soat</p>
-                        </div>
-                      ))}
-                    </div>
-                </CardContent>
-             </Card>
-          </div>
-        )}
+        
+        <div className="max-w-md mx-auto mt-6">
+           <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <CalendarDays className="h-5 w-5" />
+                  Yo'qlama ({format(today, 'MMMM yyyy')})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex justify-center">
+                  <Calendar
+                    mode="multiple"
+                    selected={workedDays}
+                    defaultMonth={today}
+                    modifiers={{ 
+                      worked: workedDays,
+                     }}
+                    modifiersClassNames={{
+                      worked: 'bg-primary text-primary-foreground',
+                    }}
+                    className="p-0"
+                  />
+              </CardContent>
+           </Card>
+        </div>
       </CardContent>
     </Card>
   );

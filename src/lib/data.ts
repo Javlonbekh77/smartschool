@@ -1,4 +1,4 @@
-import { Student, Staff, Position, Expense, Test, TestResult } from './types';
+import { Student, Staff, Position, Expense, Test, TestResult, Attendance } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
@@ -16,21 +16,18 @@ export let STAFF: Staff[] = [
     fullName: 'John Doe',
     position: POSITIONS[0],
     avatarUrl: getImage('staff1'),
-    salary: 3000000,
   },
   {
     id: 'staff2',
     fullName: 'Jane Smith',
     position: POSITIONS[2],
     avatarUrl: getImage('staff2'),
-    hoursWorked: { Mon: 4, Tue: 4, Wed: 4, Thu: 4, Fri: 4 },
   },
     {
     id: 'staff3',
     fullName: 'Peter Jones',
     position: POSITIONS[3],
     avatarUrl: getImage('staff3'),
-    salary: 3500000,
   },
 ];
 
@@ -135,3 +132,20 @@ export const EXPENSES: Expense[] = [
 
 export const TESTS: Test[] = [];
 export const TEST_RESULTS: TestResult[] = [];
+export const ATTENDANCE: Attendance[] = [
+    // Staff 1 (Monthly) - gets paid fixed salary if they worked
+    { id: 'att1', staffId: 'staff1', date: '2024-06-03', hours: 8 },
+    { id: 'att2', staffId: 'staff1', date: '2024-06-04', hours: 8 },
+    { id: 'att3', staffId: 'staff1', date: '2024-06-05', hours: 8 },
+    { id: 'att4', staffId: 'staff1', date: '2024-06-06', hours: 8 },
+    { id: 'att5', staffId: 'staff1', date: '2024-06-07', hours: 8 },
+    
+    // Staff 2 (Hourly)
+    { id: 'att6', staffId: 'staff2', date: '2024-06-03', hours: 4 },
+    { id: 'att7', staffId: 'staff2', date: '2024-06-04', hours: 4 },
+    { id: 'att8', staffId: 'staff2', date: '2024-06-05', hours: 4 },
+    { id: 'att9', staffId: 'staff2', date: '2024-06-06', hours: 4 },
+    { id: 'att10', staffId: 'staff2', date: '2024-06-07', hours: 4 },
+    { id: 'att11', staffId: 'staff2', date: '2024-06-10', hours: 5 },
+    { id: 'att12', staffId: 'staff2', date: '2024-06-11', hours: 3 },
+];

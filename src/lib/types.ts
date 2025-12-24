@@ -31,8 +31,6 @@ export type Staff = {
   fullName: string;
   position: Position;
   avatarUrl: string;
-  hoursWorked?: { [day: string]: number }; // For hourly
-  salary?: number; // For monthly
 };
 
 export type Expense = {
@@ -54,4 +52,11 @@ export type TestResult = {
   studentId: string;
   studentName: string;
   score: number;
+};
+
+export type Attendance = {
+  id: string;
+  staffId: string;
+  date: string; // YYYY-MM-DD
+  hours: number;
 };
