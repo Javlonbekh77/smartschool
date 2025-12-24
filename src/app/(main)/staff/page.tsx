@@ -9,7 +9,7 @@ import {
   CardTitle,
   CardFooter,
 } from '@/components/ui/card';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Pencil } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -18,8 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { STAFF as initialStaff, POSITIONS, ATTENDANCE } from '@/lib/data';
-import type { Staff, Attendance } from '@/lib/types';
+import { STAFF as initialStaff, POSITIONS, ATTENDANCE as initialAttendance } from '@/lib/data';
+import type { Staff, Attendance, DailyHours } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -27,15 +27,17 @@ import { AddStaffDialog } from '@/components/dialogs/add-staff-dialog';
 import { EditStaffDialog } from '@/components/dialogs/edit-staff-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-row-actions';
+import { EditHoursDialog } from '@/components/dialogs/edit-hours-dialog';
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<Staff[]>(initialStaff);
-  const [attendance, setAttendance] = useState<Attendance[]>(ATTENDANCE);
+  const [attendance, setAttendance] = useState<Attendance[]>(initialAttendance);
 
   const [dialogState, setDialogState] = useState({
     add: false,
     edit: false,
     delete: false,
+    editHours: false,
   });
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
 
@@ -49,16 +51,20 @@ export default function StaffPage() {
     setSelectedStaff(null);
   };
   
+  const getAttendanceForMonth = (staffId: string, month: number, year: number) => {
+    return attendance.filter(a => 
+      a.staffId === staffId &&
+      new Date(a.date).getMonth() === month &&
+      new Date(a.date).getFullYear() === year
+    );
+  }
+
   const calculateSalary = (member: Staff) => {
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
     
-    const memberAttendance = attendance.filter(a => 
-        a.staffId === member.id &&
-        new Date(a.date).getMonth() === currentMonth &&
-        new Date(a.date).getFullYear() === currentYear
-    );
+    const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
 
     if (member.position.type === 'monthly') {
       // Pay full salary if they worked at least once this month
@@ -72,6 +78,14 @@ export default function StaffPage() {
 
     return 0;
   };
+  
+  const getTotalHoursForMonth = (staffId: string) => {
+      const today = new Date();
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
+      const memberAttendance = getAttendanceForMonth(staffId, currentMonth, currentYear);
+      return memberAttendance.reduce((sum, a) => sum + a.hours, 0);
+  }
 
 
   const handleAddStaff = (newStaff: Omit<Staff, 'id' | 'avatarUrl'>) => {
@@ -117,6 +131,27 @@ export default function StaffPage() {
     closeDialog('delete');
   };
 
+  const handleUpdateHours = (staffId: string, dailyHours: DailyHours[]) => {
+    // Remove all attendance for this staff for the current month
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const otherAttendance = attendance.filter(a => !(a.staffId === staffId && new Date(a.date).getMonth() === currentMonth && new Date(a.date).getFullYear() === currentYear));
+
+    // Add new attendance records
+    const newAttendance: Attendance[] = dailyHours.filter(d => d.hours > 0).map(d => ({
+      id: `att-${d.date}-${staffId}-${Math.random()}`,
+      staffId,
+      date: d.date,
+      hours: d.hours,
+    }));
+
+    const updatedAttendance = [...otherAttendance, ...newAttendance];
+    setAttendance(updatedAttendance);
+    initialAttendance.splice(0, initialAttendance.length, ...updatedAttendance); // Update shared data
+    closeDialog('editHours');
+  };
+
 
   return (
     <>
@@ -145,7 +180,7 @@ export default function StaffPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Position</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead>Current Month Hours</TableHead>
                 <TableHead className="text-right">
                   Calculated Salary (This Month)
                 </TableHead>
@@ -172,11 +207,22 @@ export default function StaffPage() {
                       <span className="font-medium">{member.fullName}</span>
                     </Link>
                   </TableCell>
-                  <TableCell>{member.position.name}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className="capitalize">
                       {member.position.type}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {member.position.type === 'hourly' ? (
+                       <div className="flex items-center gap-2">
+                        <span>{getTotalHoursForMonth(member.id)} soat</span>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openDialog('editHours', member)}>
+                            <Pencil className="h-3 w-3" />
+                        </Button>
+                       </div>
+                    ) : (
+                        <span className="text-muted-foreground">-</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     {calculateSalary(member)?.toLocaleString()} so'm
@@ -219,6 +265,13 @@ export default function StaffPage() {
         onConfirm={handleDeleteStaff}
         title="Xodimni o'chirish"
         description={`Haqiqatan ham ${selectedStaff?.fullName}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
+      />
+      <EditHoursDialog
+        isOpen={dialogState.editHours}
+        onClose={() => closeDialog('editHours')}
+        staff={selectedStaff}
+        onUpdateHours={handleUpdateHours}
+        attendance={attendance}
       />
     </>
   );

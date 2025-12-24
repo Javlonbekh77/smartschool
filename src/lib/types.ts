@@ -60,3 +60,8 @@ export type Attendance = {
   date: string; // YYYY-MM-DD
   hours: number;
 };
+
+export type DailyHours = {
+  date: string;
+  hours: number;
+};
