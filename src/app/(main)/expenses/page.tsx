@@ -1,0 +1,71 @@
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter
+} from "@/components/ui/card";
+import { PlusCircle } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { EXPENSES } from "@/lib/data";
+
+export default function ExpensesPage() {
+  const expenses = EXPENSES.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-4">
+          <div>
+            <CardTitle className="font-headline">Xarajatlar</CardTitle>
+            <CardDescription>
+              Track all operational expenses.
+            </CardDescription>
+          </div>
+          <div className="ml-auto">
+            <Button size="sm" className="gap-1">
+              <PlusCircle className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Add Expense
+              </span>
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {expenses.map((expense) => (
+              <TableRow key={expense.id}>
+                <TableCell className="font-medium">{new Date(expense.date).toLocaleDateString()}</TableCell>
+                <TableCell>{expense.description}</TableCell>
+                <TableCell className="text-right">${expense.amount.toLocaleString()}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+       <CardFooter>
+        <div className="font-bold">Total Expenses: ${totalExpenses.toLocaleString()}</div>
+      </CardFooter>
+    </Card>
+  );
+}
