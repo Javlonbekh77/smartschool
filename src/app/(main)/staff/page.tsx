@@ -24,10 +24,28 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { AddStaffDialog } from '@/components/dialogs/add-staff-dialog';
+import { EditStaffDialog } from '@/components/dialogs/edit-staff-dialog';
+import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
+import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-row-actions';
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<Staff[]>(initialStaff);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [dialogState, setDialogState] = useState({
+    add: false,
+    edit: false,
+    delete: false,
+  });
+  const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+
+  const openDialog = (dialog: keyof typeof dialogState, staffMember?: Staff) => {
+    setSelectedStaff(staffMember || null);
+    setDialogState(prev => ({ ...prev, [dialog]: true }));
+  };
+
+  const closeDialog = (dialog: keyof typeof dialogState) => {
+    setDialogState(prev => ({ ...prev, [dialog]: false }));
+    setSelectedStaff(null);
+  };
 
   const calculateSalary = (member: Staff) => {
     if (member.position.type === 'monthly') {
@@ -50,7 +68,22 @@ export default function StaffPage() {
         ...newStaff
     };
     setStaff(prev => [...prev, staffToAdd]);
+    closeDialog('add');
   };
+
+  const handleUpdateStaff = (staffId: string, data: Omit<Staff, 'id' | 'avatarUrl'>) => {
+    setStaff(prev =>
+      prev.map(s => s.id === staffId ? { ...s, ...data } : s)
+    );
+    closeDialog('edit');
+  };
+  
+  const handleDeleteStaff = () => {
+    if (!selectedStaff) return;
+    setStaff(prev => prev.filter(s => s.id !== selectedStaff.id));
+    closeDialog('delete');
+  };
+
 
   return (
     <>
@@ -64,7 +97,7 @@ export default function StaffPage() {
               </CardDescription>
             </div>
             <div className="ml-auto">
-              <Button size="sm" className="gap-1" onClick={() => setIsAddDialogOpen(true)}>
+              <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Add Staff
@@ -83,6 +116,7 @@ export default function StaffPage() {
                 <TableHead className="text-right">
                   Calculated Salary (Monthly)
                 </TableHead>
+                <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -114,6 +148,13 @@ export default function StaffPage() {
                   <TableCell className="text-right">
                     {calculateSalary(member)?.toLocaleString()} so'm
                   </TableCell>
+                   <TableCell className="text-right">
+                      <StaffDataTableRowActions
+                        staff={member}
+                        onEdit={() => openDialog('edit', member)}
+                        onDelete={() => openDialog('delete', member)}
+                      />
+                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -127,10 +168,24 @@ export default function StaffPage() {
         </CardFooter>
       </Card>
       <AddStaffDialog 
-        isOpen={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
+        isOpen={dialogState.add}
+        onClose={() => closeDialog('add')}
         onAddStaff={handleAddStaff}
         positions={POSITIONS}
+      />
+       <EditStaffDialog
+        isOpen={dialogState.edit}
+        onClose={() => closeDialog('edit')}
+        staff={selectedStaff}
+        onUpdateStaff={handleUpdateStaff}
+        positions={POSITIONS}
+      />
+      <ConfirmDialog
+        isOpen={dialogState.delete}
+        onClose={() => closeDialog('delete')}
+        onConfirm={handleDeleteStaff}
+        title="Xodimni o'chirish"
+        description={`Haqiqatan ham ${selectedStaff?.fullName}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
       />
     </>
   );

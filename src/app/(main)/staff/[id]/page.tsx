@@ -1,21 +1,40 @@
-import { STAFF } from '@/lib/data';
-import { notFound } from 'next/navigation';
+'use client';
+import { STAFF as initialStaff } from '@/lib/data';
+import { notFound, useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, DollarSign, Clock } from 'lucide-react';
+import { Briefcase, DollarSign, Clock, Edit, Trash } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { Staff } from '@/lib/types';
+
+// This would typically come from a state management solution or props
+const findStaffMember = (id: string, staffList: Staff[]) => staffList.find(s => s.id === id);
+
 
 export default function StaffProfilePage({ params }: { params: { id: string } }) {
-  const staffMember = STAFF.find((s) => s.id === params.id);
+  const router = useRouter();
+  // In a real app, this would be a single fetch, not the whole list.
+  // We use state to simulate deletion/updates without a real backend.
+  const [staffList, setStaffList] = useState(initialStaff);
+  const staffMember = findStaffMember(params.id, staffList);
 
   if (!staffMember) {
-    notFound();
+    // If the staff member is not found, it might have been deleted.
+    // Redirect to the staff list page.
+    // In a real app, you might show a "not found" message before redirecting.
+    if (typeof window !== 'undefined') {
+       router.push('/staff');
+    }
+    return null; // Render nothing while redirecting
   }
   
   const calculateSalary = () => {
@@ -28,6 +47,19 @@ export default function StaffProfilePage({ params }: { params: { id: string } })
     }
     return 0;
   }
+
+  // Placeholder functions for edit/delete
+  const handleEdit = () => {
+    console.log("Edit staff member", staffMember.id);
+    // Here you would open an edit dialog
+  };
+
+  const handleDelete = () => {
+    console.log("Delete staff member", staffMember.id);
+    // Here you would open a confirmation dialog
+    setStaffList(prev => prev.filter(s => s.id !== staffMember.id));
+  };
+
 
   return (
     <Card>

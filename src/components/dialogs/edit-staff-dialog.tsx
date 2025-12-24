@@ -16,12 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Position, Staff } from "@/lib/types";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
-interface AddStaffDialogProps {
+interface EditStaffDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddStaff: (staff: Omit<Staff, 'id' | 'avatarUrl'>) => void;
+  onUpdateStaff: (staffId: string, data: Omit<Staff, 'id' | 'avatarUrl'>) => void;
+  staff: Staff | null;
   positions: Position[];
 }
 
@@ -40,72 +41,66 @@ const staffSchema = z.object({
 
 type StaffFormData = z.infer<typeof staffSchema>;
 
-export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddStaffDialogProps) {
+export function EditStaffDialog({ isOpen, onClose, onUpdateStaff, staff, positions }: EditStaffDialogProps) {
   const {
     register,
     handleSubmit,
-    control,
     reset,
     watch,
     setValue,
     formState: { errors },
   } = useForm<StaffFormData>({
     resolver: zodResolver(staffSchema),
-    defaultValues: {
-      hoursWorked: { Mon: 8, Tue: 8, Wed: 8, Thu: 8, Fri: 8 }
-    }
   });
-
+  
   const selectedPositionId = watch("positionId");
   const selectedPosition = positions.find(p => p.id === selectedPositionId);
 
   useEffect(() => {
-    // Reset salary and hours when position changes
-    reset({ 
-      ...watch(), 
-      positionId: selectedPositionId, 
-      salary: undefined, 
-      hoursWorked: { Mon: 8, Tue: 8, Wed: 8, Thu: 8, Fri: 8 }
-    });
-  }, [selectedPositionId, reset, watch]);
-
+    if (staff) {
+      reset({
+        fullName: staff.fullName,
+        positionId: staff.position.id,
+        salary: staff.salary,
+        hoursWorked: staff.hoursWorked || { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0 }
+      });
+    }
+  }, [staff, reset]);
 
   const onSubmit = (data: StaffFormData) => {
+    if (!staff) return;
+    
     const position = positions.find(p => p.id === data.positionId)!;
     
-    let newStaff: Omit<Staff, 'id' | 'avatarUrl'>;
+    let updatedStaffData: Omit<Staff, 'id' | 'avatarUrl'>;
 
     if (position.type === 'monthly') {
-      newStaff = {
+      updatedStaffData = {
         fullName: data.fullName,
         position: position,
         salary: data.salary || position.rate,
-      }
+      };
     } else { // hourly
-      newStaff = {
+      updatedStaffData = {
         fullName: data.fullName,
         position: position,
         hoursWorked: data.hoursWorked,
-      }
+      };
     }
-    
-    onAddStaff(newStaff);
-    reset();
+
+    onUpdateStaff(staff.id, updatedStaffData);
     onClose();
   };
-
-  const handleClose = () => {
-    reset();
-    onClose();
-  }
+  
+  if (!staff) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
-          <DialogTitle>Add New Staff Member</DialogTitle>
+          <DialogTitle>Tahrirlash: {staff.fullName}</DialogTitle>
           <DialogDescription>
-            Fill in the details to add a new staff member.
+            Xodim ma'lumotlarini yangilang.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -130,7 +125,7 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
                         ))}
                     </SelectContent>
                 </Select>
-                {errors.positionId && <p className="col-span-4 text-red-500 text-sm text-right">{errors.positionId.message}</p>}
+                 {errors.positionId && <p className="col-span-4 text-red-500 text-sm text-right">{errors.positionId.message}</p>}
             </div>
 
             {selectedPosition?.type === 'monthly' && (
@@ -154,15 +149,15 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
                         </div>
                       ))}
                     </div>
-                     {errors.hoursWorked && <p className="text-red-500 text-sm text-right">Please enter valid hours (0-24).</p>}
+                    {errors.hoursWorked && <p className="text-red-500 text-sm text-right">Please enter valid hours (0-24).</p>}
                  </div>
             )}
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Add Staff</Button>
+            <Button type="submit">Saqlash</Button>
           </DialogFooter>
         </form>
       </DialogContent>
