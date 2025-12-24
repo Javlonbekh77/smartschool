@@ -92,10 +92,7 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete 
       ),
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue('balance'));
-        const formatted = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        }).format(amount);
+        const formatted = amount.toLocaleString() + " so'm";
   
         return (
           <div className="text-right font-medium">
@@ -113,10 +110,7 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete 
       header: () => <div className="text-right">Monthly Fee</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue('monthlyFee'));
-        const formatted = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        }).format(amount);
+        const formatted = amount.toLocaleString() + " so'm";
         return <div className="text-right font-medium">{formatted}</div>;
       },
     },

@@ -99,7 +99,7 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
 
             {selectedPosition?.type === 'monthly' && (
                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="salary" className="text-right">Salary</Label>
+                    <Label htmlFor="salary" className="text-right">Salary (so'm)</Label>
                     <Input id="salary" type="number" {...register("salary")} placeholder={`e.g. ${selectedPosition.rate}`} className="col-span-3" />
                     {errors.salary && <p className="col-span-4 text-red-500 text-sm text-right">{errors.salary.message}</p>}
                  </div>
@@ -107,7 +107,7 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
              {selectedPosition?.type === 'hourly' && (
                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right">Rate</Label>
-                    <p className="col-span-3 text-sm text-muted-foreground">${selectedPosition.rate}/hour (Hours can be set on profile)</p>
+                    <p className="col-span-3 text-sm text-muted-foreground">{selectedPosition.rate.toLocaleString()} so'm/soat (Hours can be set on profile)</p>
                  </div>
             )}
           </div>

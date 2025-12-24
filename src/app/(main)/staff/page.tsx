@@ -112,7 +112,7 @@ export default function StaffPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    ${calculateSalary(member)?.toLocaleString()}
+                    {calculateSalary(member)?.toLocaleString()} so'm
                   </TableCell>
                 </TableRow>
               ))}

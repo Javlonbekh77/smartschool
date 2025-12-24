@@ -53,7 +53,7 @@ export function TopDebtors() {
                 <TableCell>{student.grade}</TableCell>
                 <TableCell className="text-right">
                   <Badge variant="destructive">
-                    ${student.balance.toFixed(2)}
+                    {student.balance.toLocaleString()} so'm
                   </Badge>
                 </TableCell>
               </TableRow>

@@ -97,7 +97,7 @@ export function EditStudentDialog({ isOpen, onClose, onUpdateStudent, student }:
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="monthlyFee" className="text-right">
-                Monthly Fee
+                Monthly Fee (so'm)
               </Label>
               <Input id="monthlyFee" type="number" {...register("monthlyFee")} className="col-span-3" />
               {errors.monthlyFee && <p className="col-span-4 text-red-500 text-sm text-right">{errors.monthlyFee.message}</p>}

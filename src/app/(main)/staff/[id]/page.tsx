@@ -53,9 +53,9 @@ export default function StaffProfilePage({ params }: { params: { id: string } })
             <div>
               <p className="text-sm text-muted-foreground">To'lov turi</p>
               <p className="font-semibold">
-                ${staffMember.position.rate.toLocaleString()}
-                {staffMember.position.type === 'hourly' && ' / soat'}
-                {staffMember.position.type === 'monthly' && ' / oy'}
+                {staffMember.position.rate.toLocaleString()}
+                {staffMember.position.type === 'hourly' && ' so\'m / soat'}
+                {staffMember.position.type === 'monthly' && ' so\'m / oy'}
               </p>
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function StaffProfilePage({ params }: { params: { id: string } })
             <DollarSign className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="text-sm text-muted-foreground">Hisoblangan oylik</p>
-              <p className="font-semibold">${calculateSalary()?.toLocaleString()}</p>
+              <p className="font-semibold">{calculateSalary()?.toLocaleString()} so'm</p>
             </div>
           </div>
           {staffMember.position.type === 'hourly' && staffMember.hoursWorked && (

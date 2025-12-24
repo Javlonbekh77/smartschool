@@ -75,7 +75,7 @@ export default function ExpensesPage() {
                   </TableCell>
                   <TableCell>{expense.description}</TableCell>
                   <TableCell className="text-right">
-                    ${expense.amount.toLocaleString()}
+                    {expense.amount.toLocaleString()} so'm
                   </TableCell>
                 </TableRow>
               ))}
@@ -84,7 +84,7 @@ export default function ExpensesPage() {
         </CardContent>
         <CardFooter>
           <div className="font-bold">
-            Total Expenses: ${totalExpenses.toLocaleString()}
+            Total Expenses: {totalExpenses.toLocaleString()} so'm
           </div>
         </CardFooter>
       </Card>

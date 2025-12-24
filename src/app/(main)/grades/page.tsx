@@ -62,14 +62,14 @@ export default function GradesPage() {
                   <TrendingUp className="h-5 w-5 mr-3 text-green-500" />
                   <div className="flex-1">
                     <p className="text-sm text-muted-foreground">Oylik daromad</p>
-                    <p className="font-bold">${gradeInfo.totalRevenue.toLocaleString()}</p>
+                    <p className="font-bold">{gradeInfo.totalRevenue.toLocaleString()} so'm</p>
                   </div>
                 </div>
                 <div className="flex items-center">
                   <TrendingDown className="h-5 w-5 mr-3 text-red-500" />
                   <div className="flex-1">
                     <p className="text-sm text-muted-foreground">Umumiy qarzdorlik</p>
-                    <p className="font-bold text-red-500">${gradeInfo.totalBalance.toLocaleString()}</p>
+                    <p className="font-bold text-red-500">{gradeInfo.totalBalance.toLocaleString()} so'm</p>
                   </div>
                 </div>
               </div>

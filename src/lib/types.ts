@@ -45,14 +45,12 @@ export type Test = {
   id: string;
   month: string;
   grade: number;
-  averageScore: number;
-  studentsTested: number;
 };
 
 export type TestResult = {
   id: string;
+  testId: string;
   studentId: string;
   studentName: string;
-  studentAvatarUrl: string;
   score: number;
 };

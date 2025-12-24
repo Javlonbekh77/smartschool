@@ -38,13 +38,13 @@ export default function DashboardPage() {
         />
         <SummaryCard
           title="Current Month Revenue"
-          value={`$${currentMonthRevenue.toLocaleString()}`}
+          value={`${currentMonthRevenue.toLocaleString()} so'm`}
           icon={TrendingUp}
           description="Based on active student fees"
         />
         <SummaryCard
           title="Current Month Expenses"
-          value={`$${currentMonthExpenses.toLocaleString()}`}
+          value={`${currentMonthExpenses.toLocaleString()} so'm`}
           icon={TrendingDown}
           description="Total for this month"
         />

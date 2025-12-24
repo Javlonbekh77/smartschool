@@ -61,19 +61,19 @@ export function MakePaymentDialog({
         <DialogHeader>
           <DialogTitle>To'lov qilish: {student.fullName}</DialogTitle>
           <DialogDescription>
-            Hozirgi balans: ${student.balance.toLocaleString()}
+            Hozirgi balans: {student.balance.toLocaleString()} so'm
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="amount" className="text-right">
-                Summa
+                Summa (so'm)
               </Label>
               <Input
                 id="amount"
                 type="number"
-                step="0.01"
+                step="1"
                 {...register("amount")}
                 className="col-span-3"
               />

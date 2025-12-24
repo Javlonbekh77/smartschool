@@ -16,12 +16,12 @@ import {
 } from '@/components/ui/chart';
 
 const data = [
-  { month: 'Jan', income: 18600, expenses: 8000 },
-  { month: 'Feb', income: 30500, expenses: 13980 },
-  { month: 'Mar', income: 23700, expenses: 9800 },
-  { month: 'Apr', income: 27800, expenses: 3908 },
-  { month: 'May', income: 18900, expenses: 4800 },
-  { month: 'Jun', income: 23900, expenses: 3800 },
+  { month: 'Jan', income: 18600000, expenses: 8000000 },
+  { month: 'Feb', income: 30500000, expenses: 13980000 },
+  { month: 'Mar', income: 23700000, expenses: 9800000 },
+  { month: 'Apr', income: 27800000, expenses: 3908000 },
+  { month: 'May', income: 18900000, expenses: 4800000 },
+  { month: 'Jun', income: 23900000, expenses: 3800000 },
 ];
 
 const chartConfig = {
@@ -56,11 +56,11 @@ export function FinancialChart() {
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${Number(value) / 1000}k`}
+              tickFormatter={(value) => `${Number(value) / 1000000}M`}
             />
             <ChartTooltip
               cursor={{ fill: "hsl(var(--muted))" }}
-              content={<ChartTooltipContent />}
+              content={<ChartTooltipContent formatter={(value) => `${Number(value).toLocaleString()} so'm`} />}
             />
             <Bar dataKey="income" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="Income" />
             <Bar dataKey="expenses" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="Expenses" />

@@ -25,7 +25,7 @@ interface AddExpenseDialogProps {
 
 const expenseSchema = z.object({
   description: z.string().min(1, "Description is required"),
-  amount: z.coerce.number().min(0.01, "Amount must be greater than 0"),
+  amount: z.coerce.number().min(1, "Amount must be greater than 0"),
   date: z.string().min(1, "Date is required"),
 });
 
@@ -90,12 +90,12 @@ export function AddExpenseDialog({
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="amount" className="text-right">
-                Amount
+                Amount (so'm)
               </Label>
               <Input
                 id="amount"
                 type="number"
-                step="0.01"
+                step="1"
                 {...register("amount")}
                 className="col-span-3"
               />

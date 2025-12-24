@@ -76,9 +76,9 @@ export default function PositionsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    ${position.rate.toLocaleString()}
-                    {position.type === 'hourly' && ' / hour'}
-                    {position.type === 'monthly' && ' / month'}
+                    {position.rate.toLocaleString()}
+                    {position.type === 'hourly' && ' so\'m / soat'}
+                    {position.type === 'monthly' && ' so\'m / oy'}
                   </TableCell>
                 </TableRow>
               ))}

@@ -55,7 +55,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             <div>
               <p className="text-sm text-muted-foreground">Balans</p>
               <Badge variant={student.balance < 0 ? "destructive" : "default"} className={student.balance > 0 ? "bg-green-600 text-white" : ""}>
-                ${student.balance.toLocaleString()}
+                {student.balance.toLocaleString()} so'm
               </Badge>
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             <TrendingUp className="h-6 w-6 text-muted-foreground" />
             <div>
               <p className="text-sm text-muted-foreground">Oylik to'lov</p>
-              <p className="font-semibold">${student.monthlyFee.toLocaleString()}</p>
+              <p className="font-semibold">{student.monthlyFee.toLocaleString()} so'm</p>
             </div>
           </div>
         </div>

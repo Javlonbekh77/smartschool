@@ -108,7 +108,7 @@ export function AddPositionDialog({
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="rate" className="text-right">
-                Rate / Salary
+                Rate / Salary (so'm)
               </Label>
               <Input
                 id="rate"
