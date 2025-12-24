@@ -88,20 +88,29 @@ export default function StaffProfilePage() {
               <p className="font-semibold">{calculateSalary()?.toLocaleString()} so'm</p>
             </div>
           </div>
-          {staffMember.position.type === 'hourly' && staffMember.hoursWorked && (
-            <div className="flex items-center gap-4 md:col-span-2">
-              <Clock className="h-6 w-6 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Haftalik ishlagan soatlari</p>
-                <div className="font-semibold flex gap-2 flex-wrap">
-                  {Object.entries(staffMember.hoursWorked).map(([day, hours]) => (
-                    <Badge key={day} variant="secondary">{`${day}: ${hours} soat`}</Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
+        {staffMember.position.type === 'hourly' && staffMember.hoursWorked && (
+          <div className="max-w-2xl mx-auto mt-6">
+             <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Clock className="h-5 w-5" />
+                    Haftalik ish soatlari
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                   <div className="font-semibold flex justify-around gap-2 flex-wrap">
+                      {Object.entries(staffMember.hoursWorked).map(([day, hours]) => (
+                        <div key={day} className="flex flex-col items-center p-2 rounded-md">
+                           <p className="text-sm text-muted-foreground">{day}</p>
+                           <p className="text-lg font-bold">{hours} soat</p>
+                        </div>
+                      ))}
+                    </div>
+                </CardContent>
+             </Card>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
