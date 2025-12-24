@@ -180,9 +180,10 @@ export default function StaffPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Position</TableHead>
+                <TableHead>Salary / Rate</TableHead>
                 <TableHead>Current Month Hours</TableHead>
                 <TableHead className="text-right">
-                  Calculated Salary (This Month)
+                  Current Month Salary
                 </TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
@@ -209,8 +210,12 @@ export default function StaffPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="capitalize">
-                      {member.position.type}
+                      {member.position.name}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {member.position.rate.toLocaleString()}
+                    {member.position.type === 'hourly' ? ' so\'m / soat' : ' so\'m / oy'}
                   </TableCell>
                   <TableCell>
                     {member.position.type === 'hourly' ? (
@@ -218,13 +223,14 @@ export default function StaffPage() {
                         <span>{getTotalHoursForMonth(member.id)} soat</span>
                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openDialog('editHours', member)}>
                             <Pencil className="h-3 w-3" />
+                            <span className="sr-only">Edit hours</span>
                         </Button>
                        </div>
                     ) : (
                         <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-semibold">
                     {calculateSalary(member)?.toLocaleString()} so'm
                   </TableCell>
                    <TableCell className="text-right">
