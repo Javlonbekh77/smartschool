@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Student } from "@/lib/types"
+import Link from "next/link"
 
 interface StudentDataTableRowActionsProps {
   student: Student;
@@ -27,6 +28,9 @@ export function StudentDataTableRowActions({ student }: StudentDataTableRowActio
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem asChild>
+          <Link href={`/students/${student.id}`}>View Profile</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => navigator.clipboard.writeText(student.id)}
         >

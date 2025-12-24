@@ -12,6 +12,7 @@ import {
   Wallet,
   FileText,
   School,
+  BarChart3,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -26,6 +27,7 @@ const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Bosh sahifa' },
   { href: '/students', icon: GraduationCap, label: "O'quvchilar" },
   { href: '/staff', icon: Users, label: 'Xodimlar' },
+  { href: '/grades', icon: BarChart3, label: 'Sinflar' },
   { href: '/positions', icon: Briefcase, label: 'Kasblar' },
   { href: '/tests', icon: ClipboardList, label: 'Test natijalari' },
   { href: '/expenses', icon: Wallet, label: 'Xarajatlar' },

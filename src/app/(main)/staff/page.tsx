@@ -19,6 +19,7 @@ import {
 import { STAFF } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function StaffPage() {
   const staff = STAFF;
@@ -68,13 +69,13 @@ export default function StaffPage() {
             {staff.map((member) => (
               <TableRow key={member.id}>
                 <TableCell>
-                  <div className="flex items-center gap-3">
+                  <Link href={`/staff/${member.id}`} className="flex items-center gap-3 hover:underline">
                     <Avatar>
                       <AvatarImage src={member.avatarUrl} alt={member.fullName} />
                       <AvatarFallback>{member.fullName.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <span className="font-medium">{member.fullName}</span>
-                  </div>
+                  </Link>
                 </TableCell>
                 <TableCell>{member.position.name}</TableCell>
                 <TableCell><Badge variant="outline" className="capitalize">{member.position.type}</Badge></TableCell>

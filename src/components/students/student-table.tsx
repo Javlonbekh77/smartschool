@@ -37,19 +37,20 @@ import { Student } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StudentDataTableRowActions } from './data-table-row-actions';
+import Link from 'next/link';
 
 const columns: ColumnDef<Student>[] = [
   {
     accessorKey: 'fullName',
     header: 'Name',
     cell: ({ row }) => (
-      <div className="flex items-center gap-3">
+      <Link href={`/students/${row.original.id}`} className="flex items-center gap-3 hover:underline">
          <Avatar className="hidden h-9 w-9 sm:flex">
             <AvatarImage src={row.original.avatarUrl} alt={row.original.fullName} />
             <AvatarFallback>{row.original.fullName.charAt(0)}</AvatarFallback>
         </Avatar>
-        <div className="capitalize">{row.getValue('fullName')}</div>
-      </div>
+        <div className="capitalize font-medium">{row.getValue('fullName')}</div>
+      </Link>
     ),
   },
   {
