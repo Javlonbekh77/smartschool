@@ -39,98 +39,112 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StudentDataTableRowActions } from './data-table-row-actions';
 import Link from 'next/link';
 
-const columns: ColumnDef<Student>[] = [
-  {
-    accessorKey: 'fullName',
-    header: 'Name',
-    cell: ({ row }) => (
-      <Link href={`/students/${row.original.id}`} className="flex items-center gap-3 hover:underline">
-         <Avatar className="hidden h-9 w-9 sm:flex">
-            <AvatarImage src={row.original.avatarUrl} alt={row.original.fullName} />
-            <AvatarFallback>{row.original.fullName.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div className="capitalize font-medium">{row.getValue('fullName')}</div>
-      </Link>
-    ),
-  },
-  {
-    accessorKey: 'grade',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Grade
-          <ChevronsUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="text-center">{row.getValue('grade')}</div>,
-  },
-  {
-    accessorKey: 'balance',
-    header: ({ column }) => (
-      <div className="text-right">
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Balance
-          <ChevronsUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
-    ),
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('balance'));
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount);
+interface StudentTableProps {
+  data: Student[];
+  onMakePayment: (student: Student) => void;
+  onEdit: (student: Student) => void;
+  onArchive: (student: Student) => void;
+  onDelete: (student: Student) => void;
+}
 
-      return (
-        <div className="text-right font-medium">
-          <Badge variant={amount < 0 ? 'destructive' : amount > 0 ? 'default' : 'secondary'}
-            className={amount > 0 ? 'bg-green-600 text-white' : ''}
+export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete }: StudentTableProps) {
+  const columns: ColumnDef<Student>[] = [
+    {
+      accessorKey: 'fullName',
+      header: 'Name',
+      cell: ({ row }) => (
+        <Link href={`/students/${row.original.id}`} className="flex items-center gap-3 hover:underline">
+           <Avatar className="hidden h-9 w-9 sm:flex">
+              <AvatarImage src={row.original.avatarUrl} alt={row.original.fullName} />
+              <AvatarFallback>{row.original.fullName.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div className="capitalize font-medium">{row.getValue('fullName')}</div>
+        </Link>
+      ),
+    },
+    {
+      accessorKey: 'grade',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            {formatted}
-          </Badge>
+            Grade
+            <ChevronsUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div className="text-center">{row.getValue('grade')}</div>,
+    },
+    {
+      accessorKey: 'balance',
+      header: ({ column }) => (
+        <div className="text-right">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Balance
+            <ChevronsUpDown className="ml-2 h-4 w-4" />
+          </Button>
         </div>
-      );
+      ),
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue('balance'));
+        const formatted = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+  
+        return (
+          <div className="text-right font-medium">
+            <Badge variant={amount < 0 ? 'destructive' : amount > 0 ? 'default' : 'secondary'}
+              className={amount > 0 ? 'bg-green-600 text-white' : ''}
+            >
+              {formatted}
+            </Badge>
+          </div>
+        );
+      },
     },
-  },
-  {
-    accessorKey: 'monthlyFee',
-    header: () => <div className="text-right">Monthly Fee</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('monthlyFee'));
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+    {
+      accessorKey: 'monthlyFee',
+      header: () => <div className="text-right">Monthly Fee</div>,
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue('monthlyFee'));
+        const formatted = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+        return <div className="text-right font-medium">{formatted}</div>;
+      },
     },
-  },
-   {
-    accessorKey: 'isArchived',
-    header: 'Status',
-    cell: ({ row }) => (
-      <Badge variant={row.getValue('isArchived') ? 'outline' : 'secondary'}>
-        {row.getValue('isArchived') ? 'Archived' : 'Active'}
-      </Badge>
-    ),
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      return <StudentDataTableRowActions student={row.original} />
+     {
+      accessorKey: 'isArchived',
+      header: 'Status',
+      cell: ({ row }) => (
+        <Badge variant={row.getValue('isArchived') ? 'outline' : 'secondary'}>
+          {row.getValue('isArchived') ? 'Archived' : 'Active'}
+        </Badge>
+      ),
     },
-  },
-];
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        const student = row.original;
+        return <StudentDataTableRowActions 
+          student={student} 
+          onMakePayment={() => onMakePayment(student)}
+          onEdit={() => onEdit(student)}
+          onArchive={() => onArchive(student)}
+          onDelete={() => onDelete(student)}
+        />
+      },
+    },
+  ];
 
-
-export function StudentTable({ data }: { data: Student[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});

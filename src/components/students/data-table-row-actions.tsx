@@ -15,9 +15,19 @@ import Link from "next/link"
 
 interface StudentDataTableRowActionsProps {
   student: Student;
+  onMakePayment: () => void;
+  onEdit: () => void;
+  onArchive: () => void;
+  onDelete: () => void;
 }
 
-export function StudentDataTableRowActions({ student }: StudentDataTableRowActionsProps) {
+export function StudentDataTableRowActions({ 
+  student, 
+  onMakePayment,
+  onEdit,
+  onArchive,
+  onDelete
+}: StudentDataTableRowActionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,16 +41,21 @@ export function StudentDataTableRowActions({ student }: StudentDataTableRowActio
         <DropdownMenuItem asChild>
           <Link href={`/students/${student.id}`}>View Profile</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(student.id)}
-        >
+        <DropdownMenuItem onClick={onMakePayment}>
           Make Payment
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Edit Student</DropdownMenuItem>
-        <DropdownMenuItem>{student.isArchived ? 'Unarchive' : 'Archive'} Student</DropdownMenuItem>
+        <DropdownMenuItem onClick={onEdit}>Edit Student</DropdownMenuItem>
+        <DropdownMenuItem onClick={onArchive}>
+          {student.isArchived ? 'Unarchive' : 'Archive'} Student
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive focus:bg-destructive/20">Delete Student</DropdownMenuItem>
+        <DropdownMenuItem 
+          className="text-destructive focus:bg-destructive/20"
+          onClick={onDelete}
+        >
+          Delete Student
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
