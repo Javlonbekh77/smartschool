@@ -23,10 +23,28 @@ import { POSITIONS as initialPositions } from '@/lib/data';
 import type { Position } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { AddPositionDialog } from '@/components/dialogs/add-position-dialog';
+import { EditPositionDialog } from '@/components/dialogs/edit-position-dialog';
+import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
+import { PositionDataTableRowActions } from '@/components/positions/position-data-table-row-actions';
 
 export default function PositionsPage() {
   const [positions, setPositions] = useState<Position[]>(initialPositions);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [dialogState, setDialogState] = useState({
+    add: false,
+    edit: false,
+    delete: false,
+  });
+  const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
+
+  const openDialog = (dialog: keyof typeof dialogState, position?: Position) => {
+    setSelectedPosition(position || null);
+    setDialogState(prev => ({ ...prev, [dialog]: true }));
+  };
+
+  const closeDialog = (dialog: keyof typeof dialogState) => {
+    setDialogState(prev => ({ ...prev, [dialog]: false }));
+    setSelectedPosition(null);
+  };
 
   const handleAddPosition = (newPosition: Omit<Position, 'id'>) => {
     const positionToAdd: Position = {
@@ -34,6 +52,19 @@ export default function PositionsPage() {
         ...newPosition
     };
     setPositions(prev => [...prev, positionToAdd]);
+  };
+  
+  const handleUpdatePosition = (positionId: string, data: Omit<Position, 'id'>) => {
+    setPositions(prev => 
+      prev.map(p => p.id === positionId ? { ...p, ...data } : p)
+    );
+    closeDialog('edit');
+  };
+
+  const handleDeletePosition = () => {
+    if (!selectedPosition) return;
+    setPositions(prev => prev.filter(p => p.id !== selectedPosition.id));
+    closeDialog('delete');
   };
 
   return (
@@ -48,7 +79,7 @@ export default function PositionsPage() {
               </CardDescription>
             </div>
             <div className="ml-auto">
-              <Button size="sm" className="gap-1" onClick={() => setIsAddDialogOpen(true)}>
+              <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Add Position
@@ -63,7 +94,8 @@ export default function PositionsPage() {
               <TableRow>
                 <TableHead>Position Name</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead className="text-right">Rate / Salary</TableHead>
+                <TableHead>Rate / Salary</TableHead>
+                <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -75,10 +107,17 @@ export default function PositionsPage() {
                       {position.type}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
                     {position.rate.toLocaleString()}
                     {position.type === 'hourly' && ' so\'m / soat'}
                     {position.type === 'monthly' && ' so\'m / oy'}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <PositionDataTableRowActions 
+                        position={position}
+                        onEdit={() => openDialog('edit', position)}
+                        onDelete={() => openDialog('delete', position)}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
@@ -93,9 +132,22 @@ export default function PositionsPage() {
         </CardFooter>
       </Card>
       <AddPositionDialog
-        isOpen={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
+        isOpen={dialogState.add}
+        onClose={() => closeDialog('add')}
         onAddPosition={handleAddPosition}
+      />
+      <EditPositionDialog
+        isOpen={dialogState.edit}
+        onClose={() => closeDialog('edit')}
+        position={selectedPosition}
+        onUpdatePosition={handleUpdatePosition}
+      />
+      <ConfirmDialog
+        isOpen={dialogState.delete}
+        onClose={() => closeDialog('delete')}
+        onConfirm={handleDeletePosition}
+        title="Kasbni o'chirish"
+        description={`Haqiqatan ham ${selectedPosition?.name} kasbini o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
       />
     </>
   );
