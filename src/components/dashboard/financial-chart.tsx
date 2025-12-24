@@ -1,6 +1,6 @@
 'use client';
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 import {
   Card,
@@ -8,7 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ChartTooltipContent } from '@/components/ui/chart';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart';
 
 const data = [
   { month: 'Jan', income: 18600, expenses: 8000 },
@@ -19,6 +24,17 @@ const data = [
   { month: 'Jun', income: 23900, expenses: 3800 },
 ];
 
+const chartConfig = {
+  income: {
+    label: 'Income',
+    color: 'hsl(var(--chart-1))',
+  },
+  expenses: {
+    label: 'Expenses',
+    color: 'hsl(var(--chart-2))',
+  },
+} satisfies ChartConfig;
+
 export function FinancialChart() {
   return (
     <Card>
@@ -26,8 +42,8 @@ export function FinancialChart() {
         <CardTitle className="font-headline">Monthly Analysis</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
+        <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-[350px]">
+          <BarChart data={data} accessibilityLayer>
             <XAxis
               dataKey="month"
               stroke="#888888"
@@ -40,16 +56,16 @@ export function FinancialChart() {
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${value / 1000}k`}
+              tickFormatter={(value) => `$${Number(value) / 1000}k`}
             />
-             <Tooltip
+            <ChartTooltip
               cursor={{ fill: "hsl(var(--muted))" }}
               content={<ChartTooltipContent />}
             />
             <Bar dataKey="income" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="Income" />
             <Bar dataKey="expenses" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="Expenses" />
           </BarChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </CardContent>
     </Card>
   );
