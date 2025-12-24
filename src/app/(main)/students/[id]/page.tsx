@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { GraduationCap, Calendar, DollarSign, TrendingUp } from 'lucide-react';
-import { format } from 'date-fns';
+import { GraduationCap, Calendar, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
+import { format, addMonths, setDate } from 'date-fns';
 
 export default function StudentProfilePage({ params }: { params: { id: string } }) {
   const student = STUDENTS.find((s) => s.id === params.id);
@@ -18,6 +18,27 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
   if (!student) {
     notFound();
   }
+
+  const getPaymentDeadline = () => {
+    const today = new Date();
+    const enrollmentDate = new Date(student.enrollmentDate);
+
+    if (student.paymentType === 'anniversary') {
+        let deadline = addMonths(enrollmentDate, 1);
+        while (deadline < today) {
+            deadline = addMonths(deadline, 1);
+        }
+        return deadline;
+    } else { // monthly
+        let deadline = setDate(today, 1);
+        if (deadline < today) {
+            deadline = addMonths(deadline, 1);
+        }
+        return deadline;
+    }
+  }
+
+  const paymentDeadline = getPaymentDeadline();
 
   return (
     <Card>
@@ -62,6 +83,13 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             <div>
               <p className="text-sm text-muted-foreground">Oylik to'lov</p>
               <p className="font-semibold">{student.monthlyFee.toLocaleString()} so'm</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 md:col-span-2">
+            <AlertCircle className="h-6 w-6 text-muted-foreground" />
+            <div>
+              <p className="text-sm text-muted-foreground">Keyingi to'lov sanasi</p>
+              <p className="font-semibold">{format(paymentDeadline, 'PPP')}</p>
             </div>
           </div>
         </div>

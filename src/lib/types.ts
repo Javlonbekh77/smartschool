@@ -7,6 +7,7 @@ export type Student = {
   monthlyFee: number;
   isArchived: boolean;
   avatarUrl: string;
+  paymentType: 'monthly' | 'anniversary';
 };
 
 export type Payment = {

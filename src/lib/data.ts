@@ -44,6 +44,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 300000,
     isArchived: false,
     avatarUrl: getImage('student1'),
+    paymentType: 'monthly',
   },
   {
     id: 'stu2',
@@ -54,6 +55,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 350000,
     isArchived: false,
     avatarUrl: getImage('student2'),
+    paymentType: 'anniversary',
   },
   {
     id: 'stu3',
@@ -64,6 +66,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 300000,
     isArchived: false,
     avatarUrl: getImage('student3'),
+    paymentType: 'monthly',
   },
   {
     id: 'stu4',
@@ -74,6 +77,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 400000,
     isArchived: false,
     avatarUrl: getImage('student4'),
+    paymentType: 'monthly',
   },
   {
     id: 'stu5',
@@ -84,6 +88,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 350000,
     isArchived: false,
     avatarUrl: getImage('student5'),
+    paymentType: 'anniversary',
   },
   {
     id: 'stu6',
@@ -94,6 +99,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 450000,
     isArchived: true,
     avatarUrl: getImage('student6'),
+    paymentType: 'monthly',
   },
    {
     id: 'stu7',
@@ -104,6 +110,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 300000,
     isArchived: false,
     avatarUrl: getImage('student7'),
+    paymentType: 'monthly',
   },
   {
     id: 'stu8',
@@ -114,6 +121,7 @@ export let STUDENTS: Student[] = [
     monthlyFee: 350000,
     isArchived: false,
     avatarUrl: getImage('student8'),
+    paymentType: 'anniversary',
   }
 ];
 

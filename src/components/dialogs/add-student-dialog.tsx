@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Student } from "@/lib/types";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface AddStudentDialogProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ const studentSchema = z.object({
   enrollmentDate: z.string().min(1, "Enrollment date is required"),
   monthlyFee: z.coerce.number().min(0, "Monthly fee must be a positive number"),
   balance: z.coerce.number().default(0),
+  paymentType: z.enum(['monthly', 'anniversary']),
 });
 
 type StudentFormData = z.infer<typeof studentSchema>;
@@ -44,6 +46,7 @@ export function AddStudentDialog({ isOpen, onClose, onAddStudent }: AddStudentDi
     defaultValues: {
       enrollmentDate: new Date().toISOString().split("T")[0],
       balance: 0,
+      paymentType: 'monthly',
     }
   });
 
@@ -55,7 +58,7 @@ export function AddStudentDialog({ isOpen, onClose, onAddStudent }: AddStudentDi
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Student</DialogTitle>
           <DialogDescription>
@@ -98,6 +101,31 @@ export function AddStudentDialog({ isOpen, onClose, onAddStudent }: AddStudentDi
               </Label>
               <Input id="balance" type="number" {...register("balance")} className="col-span-3" />
               {errors.balance && <p className="col-span-4 text-red-500 text-sm text-right">{errors.balance.message}</p>}
+            </div>
+             <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">
+                    Payment Cycle
+                </Label>
+                <Controller
+                    control={control}
+                    name="paymentType"
+                    render={({ field }) => (
+                        <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="col-span-3 flex flex-col space-y-1"
+                        >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="monthly" id="monthly" />
+                                <Label htmlFor="monthly">1st of each month</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="anniversary" id="anniversary" />
+                                <Label htmlFor="anniversary">Enrollment date anniversary</Label>
+                            </div>
+                        </RadioGroup>
+                    )}
+                />
             </div>
           </div>
           <DialogFooter>

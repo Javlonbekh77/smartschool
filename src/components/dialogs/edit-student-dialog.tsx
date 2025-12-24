@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Student } from "@/lib/types";
 import { useEffect } from "react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface EditStudentDialogProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ const studentSchema = z.object({
   grade: z.coerce.number().min(1, "Grade is required").max(12),
   enrollmentDate: z.string().min(1, "Enrollment date is required"),
   monthlyFee: z.coerce.number().min(0, "Monthly fee must be a positive number"),
+  paymentType: z.enum(['monthly', 'anniversary']),
 });
 
 type StudentFormData = z.infer<typeof studentSchema>;
@@ -38,6 +40,7 @@ export function EditStudentDialog({ isOpen, onClose, onUpdateStudent, student }:
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
@@ -50,6 +53,7 @@ export function EditStudentDialog({ isOpen, onClose, onUpdateStudent, student }:
         grade: student.grade,
         enrollmentDate: student.enrollmentDate,
         monthlyFee: student.monthlyFee,
+        paymentType: student.paymentType || 'monthly',
       });
     }
   }, [student, reset]);
@@ -65,7 +69,7 @@ export function EditStudentDialog({ isOpen, onClose, onUpdateStudent, student }:
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Tahrirlash: {student.fullName}</DialogTitle>
           <DialogDescription>
@@ -101,6 +105,31 @@ export function EditStudentDialog({ isOpen, onClose, onUpdateStudent, student }:
               </Label>
               <Input id="monthlyFee" type="number" {...register("monthlyFee")} className="col-span-3" />
               {errors.monthlyFee && <p className="col-span-4 text-red-500 text-sm text-right">{errors.monthlyFee.message}</p>}
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">
+                    Payment Cycle
+                </Label>
+                <Controller
+                    control={control}
+                    name="paymentType"
+                    render={({ field }) => (
+                        <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="col-span-3 flex flex-col space-y-1"
+                        >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="monthly" id="edit-monthly" />
+                                <Label htmlFor="edit-monthly">1st of each month</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="anniversary" id="edit-anniversary" />
+                                <Label htmlFor="edit-anniversary">Enrollment date anniversary</Label>
+                            </div>
+                        </RadioGroup>
+                    )}
+                />
             </div>
           </div>
           <DialogFooter>
