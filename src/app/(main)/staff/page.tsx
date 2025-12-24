@@ -67,20 +67,28 @@ export default function StaffPage() {
         avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
         ...newStaff
     };
-    setStaff(prev => [...prev, staffToAdd]);
+    initialStaff.push(staffToAdd);
+    setStaff([...initialStaff]);
     closeDialog('add');
   };
 
   const handleUpdateStaff = (staffId: string, data: Omit<Staff, 'id' | 'avatarUrl'>) => {
-    setStaff(prev =>
-      prev.map(s => s.id === staffId ? { ...s, ...data } : s)
-    );
+    const staffIndex = initialStaff.findIndex(s => s.id === staffId);
+    if (staffIndex !== -1) {
+      const currentAvatar = initialStaff[staffIndex].avatarUrl;
+      initialStaff[staffIndex] = { ...initialStaff[staffIndex], ...data, avatarUrl: currentAvatar, id: staffId };
+    }
+    setStaff([...initialStaff]);
     closeDialog('edit');
   };
   
   const handleDeleteStaff = () => {
     if (!selectedStaff) return;
-    setStaff(prev => prev.filter(s => s.id !== selectedStaff.id));
+    const staffIndex = initialStaff.findIndex(s => s.id === selectedStaff.id);
+    if (staffIndex !== -1) {
+      initialStaff.splice(staffIndex, 1);
+    }
+    setStaff([...initialStaff]);
     closeDialog('delete');
   };
 

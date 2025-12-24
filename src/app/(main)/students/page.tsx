@@ -46,32 +46,44 @@ export default function StudentsPage() {
       avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
       ...newStudent
     };
-    setStudents(prev => [...prev, studentToAdd]);
+    initialStudents.push(studentToAdd);
+    setStudents([...initialStudents]);
   };
 
   const handleMakePayment = (studentId: string, amount: number) => {
-    setStudents(prev => 
-      prev.map(s => s.id === studentId ? { ...s, balance: s.balance + amount } : s)
-    );
+    const studentIndex = initialStudents.findIndex(s => s.id === studentId);
+    if (studentIndex !== -1) {
+      initialStudents[studentIndex].balance += amount;
+    }
+    setStudents([...initialStudents]);
   };
   
   const handleUpdateStudent = (studentId: string, data: Omit<Student, 'id' | 'balance' | 'isArchived' | 'avatarUrl'>) => {
-    setStudents(prev =>
-      prev.map(s => s.id === studentId ? { ...s, ...data } : s)
-    );
+    const studentIndex = initialStudents.findIndex(s => s.id === studentId);
+    if (studentIndex !== -1) {
+        const currentAvatar = initialStudents[studentIndex].avatarUrl;
+        initialStudents[studentIndex] = { ...initialStudents[studentIndex], ...data, avatarUrl: currentAvatar, id: studentId };
+    }
+    setStudents([...initialStudents]);
   };
 
   const handleToggleArchive = () => {
     if (!selectedStudent) return;
-    setStudents(prev =>
-      prev.map(s => s.id === selectedStudent.id ? { ...s, isArchived: !s.isArchived } : s)
-    );
+    const studentIndex = initialStudents.findIndex(s => s.id === selectedStudent.id);
+    if (studentIndex !== -1) {
+      initialStudents[studentIndex].isArchived = !initialStudents[studentIndex].isArchived;
+    }
+    setStudents([...initialStudents]);
     closeDialog('archive');
   };
 
   const handleDeleteStudent = () => {
     if (!selectedStudent) return;
-    setStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
+    const studentIndex = initialStudents.findIndex(s => s.id === selectedStudent.id);
+    if (studentIndex !== -1) {
+      initialStudents.splice(studentIndex, 1);
+    }
+    setStudents([...initialStudents]);
     closeDialog('delete');
   };
 

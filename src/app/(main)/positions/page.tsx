@@ -51,19 +51,26 @@ export default function PositionsPage() {
         id: `pos${Date.now()}`,
         ...newPosition
     };
-    setPositions(prev => [...prev, positionToAdd]);
+    initialPositions.push(positionToAdd);
+    setPositions([...initialPositions]);
   };
   
   const handleUpdatePosition = (positionId: string, data: Omit<Position, 'id'>) => {
-    setPositions(prev => 
-      prev.map(p => p.id === positionId ? { ...p, ...data } : p)
-    );
+    const posIndex = initialPositions.findIndex(p => p.id === positionId);
+    if (posIndex !== -1) {
+      initialPositions[posIndex] = { ...initialPositions[posIndex], ...data };
+    }
+    setPositions([...initialPositions]);
     closeDialog('edit');
   };
 
   const handleDeletePosition = () => {
     if (!selectedPosition) return;
-    setPositions(prev => prev.filter(p => p.id !== selectedPosition.id));
+    const posIndex = initialPositions.findIndex(p => p.id === selectedPosition.id);
+    if (posIndex !== -1) {
+      initialPositions.splice(posIndex, 1);
+    }
+    setPositions([...initialPositions]);
     closeDialog('delete');
   };
 
