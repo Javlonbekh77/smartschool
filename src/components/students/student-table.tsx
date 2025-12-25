@@ -200,21 +200,24 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
           className="max-w-sm"
         />
         <Select
-            value={(table.getColumn('grade')?.getFilterValue() as string) ?? ''}
-            onValueChange={(value) => table.getColumn('grade')?.setFilterValue(value)}
+            value={(table.getColumn('grade')?.getFilterValue() as string) ?? 'all'}
+            onValueChange={(value) => {
+                const filterValue = value === 'all' ? undefined : value;
+                table.getColumn('grade')?.setFilterValue(filterValue);
+            }}
         >
             <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by Grade" />
             </SelectTrigger>
             <SelectContent>
-                 <SelectItem value="">All Grades</SelectItem>
+                 <SelectItem value="all">All Grades</SelectItem>
                 {uniqueGrades.map(grade => (
                     <SelectItem key={grade} value={String(grade)}>{grade}-sinf</SelectItem>
                 ))}
             </SelectContent>
         </Select>
          <Select
-            value={(table.getColumn('isArchived')?.getFilterValue() as string) ?? ''}
+            value={(table.getColumn('isArchived')?.getFilterValue() as string) ?? 'all'}
             onValueChange={(value) => table.getColumn('isArchived')?.setFilterValue(value === 'all' ? undefined : (value === 'active' ? false : true))}
         >
             <SelectTrigger className="w-[180px]">
