@@ -109,7 +109,6 @@ export default function StaffPage() {
       setStaff(prevStaff => 
           prevStaff.map(s => s.id === staffId ? { ...s, ...data } : s)
       );
-      closeDialog('edit');
   };
   
   const handleDeleteStaff = () => {
