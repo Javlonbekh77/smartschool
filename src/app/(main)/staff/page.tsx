@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/table';
 import { STAFF as initialStaff, POSITIONS as initialPositions, ATTENDANCE as initialAttendance } from '@/lib/data';
 import type { Staff, Attendance, Position, WorkDay } from '@/lib/types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { AddStaffDialog } from '@/components/dialogs/add-staff-dialog';
@@ -98,17 +98,16 @@ export default function StaffPage() {
     return memberAttendance.reduce((sum, a) => sum + a.hours, 0);
   }
   
-  const handleAddStaff = (newStaffData: Omit<Staff, 'id' | 'avatarUrl'>) => {
+  const handleAddStaff = (newStaffData: Omit<Staff, 'id'>) => {
     const staffToAdd: Staff = {
         id: `staff${Date.now()}`,
-        avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
         ...newStaffData
     };
     setStaff(prev => [...prev, staffToAdd]);
     closeDialog('add');
   };
 
-  const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl'>>) => {
+  const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id'>>) => {
     setStaff(prevStaff => 
         prevStaff.map(s => (s.id === staffId ? { ...s, ...data } : s))
     );
@@ -128,7 +127,6 @@ export default function StaffPage() {
     date: string
   ) => {
     setAttendance(prevAttendance => {
-        // Remove existing records for that date to avoid duplicates
         const otherDatesAttendance = prevAttendance.filter(a => a.date !== date);
 
         const newAttendance: Attendance[] = records
@@ -201,10 +199,6 @@ export default function StaffPage() {
                       className="flex items-center gap-3 hover:underline"
                     >
                       <Avatar>
-                        <AvatarImage
-                          src={member.avatarUrl}
-                          alt={member.fullName}
-                        />
                         <AvatarFallback>
                           {member.fullName.charAt(0)}
                         </AvatarFallback>

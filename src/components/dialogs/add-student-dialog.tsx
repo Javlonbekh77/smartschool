@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 interface AddStudentDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddStudent: (student: Omit<Student, 'id' | 'isArchived' | 'avatarUrl'>) => void;
+  onAddStudent: (student: Omit<Student, 'id' | 'isArchived'>) => void;
 }
 
 const studentSchema = z.object({

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { GraduationCap, Calendar, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
 import { format, addMonths, setDate } from 'date-fns';
@@ -21,18 +21,25 @@ export default function StudentProfilePage() {
   const id = typeof params.id === 'string' ? params.id : '';
   const [students] = useLocalStorage<Student[]>('students', initialStudents);
   const [student, setStudent] = useState<Student | undefined>(undefined);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const foundStudent = students.find((s) => s.id === id);
-    if (foundStudent) {
-      setStudent(foundStudent);
-    } else {
-      notFound();
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      const foundStudent = students.find((s) => s.id === id);
+      if (foundStudent) {
+        setStudent(foundStudent);
+      } else {
+        notFound();
+      }
     }
-  }, [id, students]);
+  }, [id, students, isMounted]);
 
 
-  if (!student) {
+  if (!isMounted || !student) {
     return null; // or a loading spinner
   }
 
@@ -61,7 +68,6 @@ export default function StudentProfilePage() {
     <Card>
       <CardHeader className="items-center text-center">
         <Avatar className="w-24 h-24 mb-4">
-          <AvatarImage src={student.avatarUrl} alt={student.fullName} />
           <AvatarFallback>{student.fullName.charAt(0)}</AvatarFallback>
         </Avatar>
         <CardTitle className="font-headline text-3xl">{student.fullName}</CardTitle>

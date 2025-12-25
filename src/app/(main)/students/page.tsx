@@ -50,11 +50,10 @@ export default function StudentsPage() {
     setSelectedStudent(null);
   };
 
-  const handleAddStudent = (newStudent: Omit<Student, 'id' | 'isArchived' | 'avatarUrl'>) => {
+  const handleAddStudent = (newStudent: Omit<Student, 'id' | 'isArchived'>) => {
     const studentToAdd: Student = {
       id: `stu${Date.now()}`,
       isArchived: false,
-      avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
       ...newStudent
     };
     setStudents(prev => [...prev, studentToAdd]);
@@ -68,7 +67,7 @@ export default function StudentsPage() {
     closeDialog('payment');
   };
   
-  const handleUpdateStudent = (studentId: string, data: Omit<Student, 'id' | 'balance' | 'isArchived' | 'avatarUrl'>) => {
+  const handleUpdateStudent = (studentId: string, data: Omit<Student, 'id' | 'balance' | 'isArchived'>) => {
     setStudents(prev => prev.map(s => {
       if (s.id === studentId) {
         return { ...s, ...data };

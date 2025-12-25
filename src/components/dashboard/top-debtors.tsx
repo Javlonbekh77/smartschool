@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { STUDENTS as initialStudents } from '@/lib/data';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import useLocalStorage from '@/hooks/use-local-storage';
 import type { Student } from '@/lib/types';
 
@@ -69,7 +69,6 @@ export function TopDebtors() {
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={student.avatarUrl} alt={student.fullName} />
                       <AvatarFallback>{student.fullName.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className="font-medium">{student.fullName}</div>

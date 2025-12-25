@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useI18n } from '@/context/i18n';
 import { useAuth } from '@/context/auth';
 
@@ -130,14 +130,9 @@ export function Header() {
               size="icon"
               className="overflow-hidden rounded-full"
             >
-              <Image
-                src="https://picsum.photos/seed/admin/36/36"
-                width={36}
-                height={36}
-                alt="Avatar"
-                className="overflow-hidden rounded-full"
-                data-ai-hint="professional portrait"
-              />
+              <Avatar className="h-9 w-9">
+                <AvatarFallback>{user?.username.charAt(0)}</AvatarFallback>
+              </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

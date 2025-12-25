@@ -22,7 +22,7 @@ import { useEffect } from "react";
 interface AddStaffDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddStaff: (staff: Omit<Staff, 'id' | 'avatarUrl'>) => void;
+  onAddStaff: (staff: Omit<Staff, 'id'>) => void;
   positions: Position[];
 }
 
@@ -79,7 +79,7 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
   const onSubmit = (data: StaffFormData) => {
     const position = positions.find(p => p.id === data.positionId)!;
     
-    const newStaff: Omit<Staff, 'id' | 'avatarUrl'> = {
+    const newStaff: Omit<Staff, 'id'> = {
         fullName: data.fullName,
         position: position,
         workSchedule: data.workSchedule,

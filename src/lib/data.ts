@@ -1,7 +1,4 @@
 import { Student, Staff, Position, Expense, Test, TestResult, Attendance } from './types';
-import { PlaceHolderImages } from './placeholder-images';
-
-const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
 
 export const POSITIONS: Position[] = [
   { id: 'pos1', name: 'Math Teacher', type: 'monthly', rate: 3000000 },
@@ -15,13 +12,11 @@ export let STAFF: Staff[] = [
     id: 'staff1',
     fullName: 'John Doe',
     position: POSITIONS[0],
-    avatarUrl: getImage('staff1'),
   },
   {
     id: 'staff2',
     fullName: 'Jane Smith',
     position: POSITIONS[2],
-    avatarUrl: getImage('staff2'),
      workSchedule: [
       { day: 'Monday', hours: 4, isWorkingDay: true },
       { day: 'Tuesday', hours: 4, isWorkingDay: true },
@@ -36,7 +31,6 @@ export let STAFF: Staff[] = [
     id: 'staff3',
     fullName: 'Peter Jones',
     position: POSITIONS[3],
-    avatarUrl: getImage('staff3'),
   },
 ];
 
@@ -49,7 +43,6 @@ export let STUDENTS: Student[] = [
     balance: -150000,
     monthlyFee: 300000,
     isArchived: false,
-    avatarUrl: getImage('student1'),
     paymentType: 'monthly',
   },
   {
@@ -60,7 +53,6 @@ export let STUDENTS: Student[] = [
     balance: 50000,
     monthlyFee: 350000,
     isArchived: false,
-    avatarUrl: getImage('student2'),
     paymentType: 'anniversary',
   },
   {
@@ -71,7 +63,6 @@ export let STUDENTS: Student[] = [
     balance: -300000,
     monthlyFee: 300000,
     isArchived: false,
-    avatarUrl: getImage('student3'),
     paymentType: 'monthly',
   },
   {
@@ -82,7 +73,6 @@ export let STUDENTS: Student[] = [
     balance: 0,
     monthlyFee: 400000,
     isArchived: false,
-    avatarUrl: getImage('student4'),
     paymentType: 'monthly',
   },
   {
@@ -93,7 +83,6 @@ export let STUDENTS: Student[] = [
     balance: -700000,
     monthlyFee: 350000,
     isArchived: false,
-    avatarUrl: getImage('student5'),
     paymentType: 'anniversary',
   },
   {
@@ -104,7 +93,6 @@ export let STUDENTS: Student[] = [
     balance: 100000,
     monthlyFee: 450000,
     isArchived: true,
-    avatarUrl: getImage('student6'),
     paymentType: 'monthly',
   },
    {
@@ -115,7 +103,6 @@ export let STUDENTS: Student[] = [
     balance: 0,
     monthlyFee: 300000,
     isArchived: false,
-    avatarUrl: getImage('student7'),
     paymentType: 'monthly',
   },
   {
@@ -126,7 +113,6 @@ export let STUDENTS: Student[] = [
     balance: -50000,
     monthlyFee: 350000,
     isArchived: false,
-    avatarUrl: getImage('student8'),
     paymentType: 'anniversary',
   }
 ];

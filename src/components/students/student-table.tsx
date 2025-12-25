@@ -3,8 +3,6 @@ import * as React from 'react';
 import {
   ChevronsUpDown,
   ChevronDown,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
 import {
   ColumnDef,
@@ -25,9 +23,6 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
@@ -38,9 +33,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 import { Student } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { StudentDataTableRowActions } from './data-table-row-actions';
 import Link from 'next/link';
 
@@ -61,7 +64,6 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
       cell: ({ row }) => (
         <Link href={`/students/${row.original.id}`} className="flex items-center gap-3 hover:underline">
            <Avatar className="hidden h-9 w-9 sm:flex">
-              <AvatarImage src={row.original.avatarUrl} alt={row.original.fullName} />
               <AvatarFallback>{row.original.fullName.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="capitalize font-medium">{row.getValue('fullName')}</div>
@@ -128,6 +130,9 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
           {row.getValue('isArchived') ? 'Archived' : 'Active'}
         </Badge>
       ),
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
+      }
     },
   ];
   
@@ -153,6 +158,11 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  
+  const uniqueGrades = React.useMemo(() => {
+    const grades = new Set(data.map(student => student.grade));
+    return Array.from(grades).sort((a,b) => a - b);
+  }, [data]);
 
   const table = useReactTable({
     data,
@@ -180,7 +190,7 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-2">
         <Input
           placeholder="Filter students..."
           value={(table.getColumn('fullName')?.getFilterValue() as string) ?? ''}
@@ -189,6 +199,33 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
           }
           className="max-w-sm"
         />
+        <Select
+            value={(table.getColumn('grade')?.getFilterValue() as string) ?? ''}
+            onValueChange={(value) => table.getColumn('grade')?.setFilterValue(value)}
+        >
+            <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by Grade" />
+            </SelectTrigger>
+            <SelectContent>
+                 <SelectItem value="">All Grades</SelectItem>
+                {uniqueGrades.map(grade => (
+                    <SelectItem key={grade} value={String(grade)}>{grade}-sinf</SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
+         <Select
+            value={(table.getColumn('isArchived')?.getFilterValue() as string) ?? ''}
+            onValueChange={(value) => table.getColumn('isArchived')?.setFilterValue(value === 'all' ? undefined : (value === 'active' ? false : true))}
+        >
+            <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+            </SelectContent>
+        </Select>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

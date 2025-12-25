@@ -6,7 +6,6 @@ export type Student = {
   balance: number;
   monthlyFee: number;
   isArchived: boolean;
-  avatarUrl: string;
   paymentType: 'monthly' | 'anniversary';
 };
 
@@ -37,7 +36,6 @@ export type Staff = {
   id: string;
   fullName: string;
   position: Position;
-  avatarUrl: string;
   workSchedule?: WorkDay[];
 };
 
