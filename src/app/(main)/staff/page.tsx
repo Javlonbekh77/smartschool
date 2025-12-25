@@ -140,7 +140,7 @@ export default function StaffPage() {
   ) => {
     
     // Remove existing records for that date to avoid duplicates
-    const otherDatesAttendance = attendance.filter(a => a.date !== date);
+    const otherDatesAttendance = initialAttendance.filter(a => a.date !== date);
 
     const newAttendance: Attendance[] = records
       .filter(r => r.hours > 0)
@@ -152,9 +152,10 @@ export default function StaffPage() {
       }));
 
     const updatedAttendance = [...otherDatesAttendance, ...newAttendance];
-    setAttendance(updatedAttendance);
+    
     // Also update master list
     initialAttendance.splice(0, initialAttendance.length, ...updatedAttendance);
+    setAttendance(updatedAttendance);
     closeDialog('addAttendance');
   };
 
@@ -275,7 +276,7 @@ export default function StaffPage() {
         isOpen={dialogState.addAttendance}
         onClose={() => closeDialog('addAttendance')}
         onAddAttendance={handleAddAttendance}
-        staff={staff.filter(s => s.position.type === 'hourly')}
+        staff={initialStaff.filter(s => s.position.type === 'hourly')}
       />
     </>
   );
