@@ -13,6 +13,7 @@ import {
   FileText,
   School,
   BarChart3,
+  Settings,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -34,6 +35,10 @@ const navItems = [
   { href: '/expenses', icon: Wallet, labelKey: 'sidebar.expenses' },
   { href: '/reports', icon: FileText, labelKey: 'sidebar.reports' },
 ];
+
+const secondaryNavItems = [
+    { href: '/settings', icon: Settings, labelKey: 'sidebar.settings' },
+]
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -68,6 +73,28 @@ export function Sidebar() {
               <TooltipContent side="right">{t(item.labelKey)}</TooltipContent>
             </Tooltip>
           ))}
+        </TooltipProvider>
+      </nav>
+      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+        <TooltipProvider>
+            {secondaryNavItems.map((item) => (
+                <Tooltip key={item.href}>
+                <TooltipTrigger asChild>
+                    <Link
+                    href={item.href}
+                    className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8',
+                        pathname.startsWith(item.href) &&
+                        'bg-accent text-accent-foreground'
+                    )}
+                    >
+                    <item.icon className="h-5 w-5" />
+                    <span className="sr-only">{t(item.labelKey)}</span>
+                    </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">{t(item.labelKey)}</TooltipContent>
+                </Tooltip>
+            ))}
         </TooltipProvider>
       </nav>
     </aside>

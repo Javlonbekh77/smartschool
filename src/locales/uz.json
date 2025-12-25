@@ -24,7 +24,8 @@
         "positions": "Kasblar",
         "tests": "Test natijalari",
         "expenses": "Xarajatlar",
-        "reports": "Hisobotlar"
+        "reports": "Hisobotlar",
+        "settings": "Sozlamalar"
     },
     "header": {
         "language": "Til",
@@ -86,6 +87,16 @@
     "reports": {
         "title": "AI Qarzdorlar Hisoboti",
         "description": "AI yordamida to'lanmagan qoldiqlari bor o'quvchilarning qisqa hisobotini yarating."
+    },
+    "settings": {
+        "title": "Administrator Sozlamalari",
+        "description": "Administratorning tizimga kirish ma'lumotlarini boshqarish.",
+        "username": "Login",
+        "password": "Parol",
+        "updateSuccessTitle": "Sozlamalar Yangilandi",
+        "updateSuccessDesc": "Sizning kirish ma'lumotlaringiz muvaffaqiyatli yangilandi.",
+        "showPassword": "Parolni ko'rsatish",
+        "hidePassword": "Parolni yashirish"
     },
     "common": {
         "loading": "Yuklanmoqda...",

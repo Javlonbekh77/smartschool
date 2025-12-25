@@ -13,6 +13,7 @@ import {
   BarChart3,
   ArrowLeft,
   Languages,
+  Settings,
 } from 'lucide-react';
 import {
   Sheet,
@@ -44,6 +45,7 @@ const navItems = [
   { href: '/tests', icon: ClipboardList, labelKey: 'sidebar.tests' },
   { href: '/expenses', icon: Wallet, labelKey: 'sidebar.expenses' },
   { href: '/reports', icon: FileText, labelKey: 'sidebar.reports' },
+  { href: '/settings', icon: Settings, labelKey: 'sidebar.settings' },
 ];
 
 export function Header() {
@@ -139,7 +141,7 @@ export function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>{t('header.myAccount')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>{t('header.settings')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/settings')}>{t('header.settings')}</DropdownMenuItem>
             <DropdownMenuItem>{t('header.support')}</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>{t('header.logout')}</DropdownMenuItem>

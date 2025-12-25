@@ -24,7 +24,8 @@
         "positions": "Positions",
         "tests": "Test Results",
         "expenses": "Expenses",
-        "reports": "Reports"
+        "reports": "Reports",
+        "settings": "Settings"
     },
     "header": {
         "language": "Language",
@@ -86,6 +87,16 @@
     "reports": {
         "title": "AI Debtor Report",
         "description": "Generate a summary report of students with outstanding balances using AI."
+    },
+    "settings": {
+        "title": "Admin Settings",
+        "description": "Manage administrator login credentials.",
+        "username": "Username",
+        "password": "Password",
+        "updateSuccessTitle": "Settings Updated",
+        "updateSuccessDesc": "Your credentials have been successfully updated.",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password"
     },
     "common": {
         "loading": "Loading...",
