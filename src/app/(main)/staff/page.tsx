@@ -72,13 +72,13 @@ export default function StaffPage() {
     const today = new Date();
     const currentMonth = today.getUTCMonth();
     const currentYear = today.getUTCFullYear();
-    const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
-
+    
     if (member.position.type === 'monthly') {
       return member.position.rate;
     }
     
     if (member.position.type === 'hourly') {
+      const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
       const totalHours = memberAttendance.reduce((sum, a) => sum + a.hours, 0);
       return totalHours * member.position.rate;
     }
@@ -106,9 +106,10 @@ export default function StaffPage() {
   };
 
   const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl'>>) => {
-      setStaff(prevStaff => 
-          prevStaff.map(s => s.id === staffId ? { ...s, ...data } : s)
-      );
+    setStaff(prevStaff => 
+        prevStaff.map(s => (s.id === staffId ? { ...s, ...data } : s))
+    );
+    closeDialog('edit');
   };
   
   const handleDeleteStaff = () => {

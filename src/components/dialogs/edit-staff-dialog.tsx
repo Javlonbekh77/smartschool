@@ -95,13 +95,12 @@ export function EditStaffDialog({ isOpen, onClose, onUpdateStaff, staff, positio
     };
 
     onUpdateStaff(staff.id, updatedStaffData);
-    onClose();
   };
   
   if (!staff) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t('common.edit')}: {staff.fullName}</DialogTitle>

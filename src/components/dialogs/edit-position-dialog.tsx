@@ -70,13 +70,12 @@ export function EditPositionDialog({
   const onSubmit = (data: PositionFormData) => {
     if (!position) return;
     onUpdatePosition(position.id, data);
-    onClose();
   };
   
   if (!position) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Tahrirlash: {position.name}</DialogTitle>

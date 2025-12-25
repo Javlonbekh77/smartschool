@@ -62,13 +62,12 @@ export function EditStudentDialog({ isOpen, onClose, onUpdateStudent, student }:
   const onSubmit = (data: StudentFormData) => {
     if (!student) return;
     onUpdateStudent(student.id, data);
-    onClose();
   };
   
   if (!student) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Tahrirlash: {student.fullName}</DialogTitle>

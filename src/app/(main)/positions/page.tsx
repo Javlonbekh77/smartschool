@@ -62,6 +62,7 @@ export default function PositionsPage() {
   
   const handleUpdatePosition = (positionId: string, data: Omit<Position, 'id'>) => {
     setPositions(prev => prev.map(p => p.id === positionId ? { ...p, ...data } : p));
+    closeDialog('edit');
   };
 
   const handleDeletePosition = () => {
