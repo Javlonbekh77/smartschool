@@ -1,7 +1,7 @@
 'use client';
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
-
+import { useI18n } from '@/context/i18n';
 import {
   Card,
   CardContent,
@@ -36,10 +36,11 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function FinancialChart() {
+  const { t } = useI18n();
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Monthly Analysis</CardTitle>
+        <CardTitle className="font-headline">{t('dashboard.monthlyAnalysis')}</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-[350px]">

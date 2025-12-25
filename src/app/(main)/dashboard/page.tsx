@@ -14,8 +14,10 @@ import { TopDebtors } from '@/components/dashboard/top-debtors';
 import { STUDENTS as initialStudents, STAFF as initialStaff, EXPENSES as initialExpenses } from '@/lib/data';
 import useLocalStorage from '@/hooks/use-local-storage';
 import type { Student, Staff, Expense } from '@/lib/types';
+import { useI18n } from '@/context/i18n';
 
 export default function DashboardPage() {
+  const { t } = useI18n();
   const [students, setStudents] = useLocalStorage<Student[]>('students', initialStudents);
   const [staff, setStaff] = useLocalStorage<Staff[]>('staff', initialStaff);
   const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpenses);
@@ -44,26 +46,26 @@ export default function DashboardPage() {
     <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
-          title="Total Active Students"
+          title={t('dashboard.totalActiveStudents')}
           value={totalStudents.toString()}
           icon={GraduationCap}
         />
         <SummaryCard
-          title="Total Staff Members"
+          title={t('dashboard.totalStaffMembers')}
           value={totalStaff.toString()}
           icon={Users}
         />
         <SummaryCard
-          title="Current Month Revenue"
+          title={t('dashboard.currentMonthRevenue')}
           value={`${currentMonthRevenue.toLocaleString()} so'm`}
           icon={TrendingUp}
-          description="Based on active student fees"
+          description={t('dashboard.currentMonthRevenueDesc')}
         />
         <SummaryCard
-          title="Current Month Expenses"
+          title={t('dashboard.currentMonthExpenses')}
           value={`${currentMonthExpenses.toLocaleString()} so'm`}
           icon={TrendingDown}
-          description="Total for this month"
+          description={t('dashboard.currentMonthExpensesDesc')}
         />
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">

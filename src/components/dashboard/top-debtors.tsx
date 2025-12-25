@@ -20,8 +20,10 @@ import { STUDENTS as initialStudents } from '@/lib/data';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import useLocalStorage from '@/hooks/use-local-storage';
 import type { Student } from '@/lib/types';
+import { useI18n } from '@/context/i18n';
 
 export function TopDebtors() {
+  const { t } = useI18n();
   const [students] = useLocalStorage<Student[]>('students', initialStudents);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -33,8 +35,8 @@ export function TopDebtors() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Top Debtors</CardTitle>
-          <CardDescription>Students with the largest outstanding balances.</CardDescription>
+          <CardTitle className="font-headline">{t('dashboard.topDebtors')}</CardTitle>
+          <CardDescription>{t('dashboard.topDebtorsDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <p>Loading...</p>
@@ -51,8 +53,8 @@ export function TopDebtors() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Top Debtors</CardTitle>
-        <CardDescription>Students with the largest outstanding balances.</CardDescription>
+        <CardTitle className="font-headline">{t('dashboard.topDebtors')}</CardTitle>
+        <CardDescription>{t('dashboard.topDebtorsDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
