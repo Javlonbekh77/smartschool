@@ -22,6 +22,15 @@ export let STAFF: Staff[] = [
     fullName: 'Jane Smith',
     position: POSITIONS[2],
     avatarUrl: getImage('staff2'),
+     workSchedule: [
+      { day: 'Monday', hours: 4, isWorkingDay: true },
+      { day: 'Tuesday', hours: 4, isWorkingDay: true },
+      { day: 'Wednesday', hours: 4, isWorkingDay: true },
+      { day: 'Thursday', hours: 4, isWorkingDay: true },
+      { day: 'Friday', hours: 4, isWorkingDay: true },
+      { day: 'Saturday', hours: 0, isWorkingDay: false },
+      { day: 'Sunday', hours: 0, isWorkingDay: false },
+    ]
   },
     {
     id: 'staff3',

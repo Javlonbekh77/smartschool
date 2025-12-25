@@ -72,16 +72,38 @@ export function AddAttendanceDialog({
   // Populate the form with all staff members when the dialog opens
   useEffect(() => {
     if (isOpen) {
-      const staffRecords = staff.map(s => ({
-        staffId: s.id,
-        staffName: s.fullName,
-        positionType: s.position.type,
-        hours: s.position.type === 'monthly' ? 8 : 0, // Default hours
-      }));
+      const today = new Date(watch('date') || new Date()).getDay(); // Sunday - 0, Monday - 1, ...
+      const weekDayMap = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const todayString = weekDayMap[today];
+
+
+      const staffRecords = staff.map(s => {
+        let defaultHours = 0;
+        if (s.position.type === 'monthly') {
+            defaultHours = 8;
+        } else if (s.position.type === 'hourly' && s.workSchedule) {
+            const workDay = s.workSchedule.find(d => d.day === todayString && d.isWorkingDay);
+            if (workDay) {
+                defaultHours = workDay.hours;
+            }
+        }
+        
+        return {
+            staffId: s.id,
+            staffName: s.fullName,
+            positionType: s.position.type,
+            hours: defaultHours,
+        }
+      });
       replace(staffRecords);
-      setValue('date', new Date().toISOString().split('T')[0]);
     }
-  }, [isOpen, staff, replace, setValue]);
+  }, [isOpen, staff, replace, watch('date')]);
+
+  useEffect(() => {
+    if (isOpen) {
+        setValue('date', new Date().toISOString().split('T')[0]);
+    }
+  }, [isOpen, setValue])
 
   const onSubmit = (data: AttendanceFormData) => {
     onAddAttendance(data.records, data.date);
@@ -99,7 +121,7 @@ export function AddAttendanceDialog({
         <DialogHeader>
           <DialogTitle>Add Attendance Record</DialogTitle>
           <DialogDescription>
-            Enter the hours worked for each staff member for the selected date.
+            Enter the hours worked for each staff member for the selected date. Default hours are based on work schedule.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>

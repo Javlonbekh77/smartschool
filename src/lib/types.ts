@@ -26,11 +26,19 @@ export type Position = {
   rate: number;
 };
 
+export type WorkDay = {
+  day: string; // e.g., "Monday"
+  hours: number;
+  isWorkingDay: boolean;
+};
+
+
 export type Staff = {
   id: string;
   fullName: string;
   position: Position;
   avatarUrl: string;
+  workSchedule?: WorkDay[];
 };
 
 export type Expense = {
