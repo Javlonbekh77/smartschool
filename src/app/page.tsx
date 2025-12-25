@@ -1,15 +1,19 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import { School, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useI18n } from '@/context/i18n';
 
 export default function RootPage() {
+  const { t } = useI18n();
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="px-4 lg:px-6 h-14 flex items-center">
         <Link href="#" className="flex items-center justify-center">
           <School className="h-6 w-6" />
           <span className="ml-2 font-semibold font-headline">
-            Smart School Manager
+            {t('landing.title')}
           </span>
         </Link>
       </header>
@@ -20,17 +24,16 @@ export default function RootPage() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold font-headline tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Maktabingizni oson va samarali boshqaring
+                    {t('landing.headline')}
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Smart School Manager o'quvchilar, xodimlar, to'lovlar va
-                    barchasini bir joyda kuzatib borish uchun yagona platforma.
+                    {t('landing.subheadline')}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button asChild size="lg">
                     <Link href="/dashboard">
-                      Boshqaruv paneliga o'tish
+                      {t('landing.cta')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -50,8 +53,7 @@ export default function RootPage() {
       </main>
       <footer className="flex items-center justify-center p-4 border-t">
         <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Smart School Manager. All rights
-          reserved.
+          © {new Date().getFullYear()} {t('landing.title')}. {t('landing.rights')}
         </p>
       </footer>
     </div>

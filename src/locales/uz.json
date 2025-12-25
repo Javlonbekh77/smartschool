@@ -1,0 +1,85 @@
+{
+    "landing": {
+        "title": "Smart School Manager",
+        "headline": "Maktabingizni oson va samarali boshqaring",
+        "subheadline": "Smart School Manager o'quvchilar, xodimlar, to'lovlar va barchasini bir joyda kuzatib borish uchun yagona platforma.",
+        "cta": "Boshqaruv paneliga o'tish",
+        "rights": "Barcha huquqlar himoyalangan."
+    },
+    "sidebar": {
+        "dashboard": "Bosh sahifa",
+        "students": "O'quvchilar",
+        "staff": "Xodimlar",
+        "grades": "Sinflar",
+        "positions": "Kasblar",
+        "tests": "Test natijalari",
+        "expenses": "Xarajatlar",
+        "reports": "Hisobotlar"
+    },
+    "header": {
+        "language": "Til",
+        "myAccount": "Mening hisobim",
+        "settings": "Sozlamalar",
+        "support": "Yordam",
+        "logout": "Chiqish"
+    },
+    "dashboard": {
+        "totalActiveStudents": "Jami faol o'quvchilar",
+        "totalStaffMembers": "Jami xodimlar",
+        "currentMonthRevenue": "Joriy oy daromadi",
+        "currentMonthRevenueDesc": "Faol o'quvchilar to'lovlari asosida",
+        "currentMonthExpenses": "Joriy oy xarajatlari",
+        "currentMonthExpensesDesc": "Shu oy uchun jami",
+        "monthlyAnalysis": "Oylik tahlil",
+        "topDebtors": "Asosiy qarzdorlar",
+        "topDebtorsDesc": "Eng katta to'lanmagan qoldiqlari bo'lgan o'quvchilar."
+    },
+    "students": {
+        "title": "O'quvchilar",
+        "description": "O'quvchilaringizni va ularning to'lovlarini boshqaring.",
+        "addStudent": "O'quvchi qo'shish"
+    },
+    "staff": {
+        "title": "Xodimlar",
+        "description": "Maktabingiz xodimlarini va ularning maoshlarini boshqaring.",
+        "addAttendance": "Yo'qlama qo'shish",
+        "addStaff": "Xodim qo'shish"
+    },
+    "grades": {
+        "title": "Sinflar",
+        "description": "Sinflar bo'yicha moliyaviy va o'quvchilar soni haqida ma'lumot."
+    },
+    "positions": {
+        "title": "Kasblar",
+        "description": "Ish kasblarini va ularning to'lov tuzilmalarini boshqaring.",
+        "addPosition": "Kasb qo'shish"
+    },
+    "tests": {
+        "title": "Test natijalari",
+        "description": "O'quvchilarning test natijalarini oy va sinf bo'yicha kuzatib boring.",
+        "addTestResult": "Test natijasini qo'shish"
+    },
+    "expenses": {
+        "title": "Xarajatlar",
+        "description": "Barcha operatsion xarajatlarni kuzatib boring.",
+        "addExpense": "Xarajat qo'shish"
+    },
+    "reports": {
+        "title": "AI Qarzdorlar Hisoboti",
+        "description": "AI yordamida to'lanmagan qoldiqlari bor o'quvchilarning qisqa hisobotini yarating."
+    },
+    "common": {
+        "loading": "Yuklanmoqda...",
+        "back": "Orqaga",
+        "cancel": "Bekor qilish",
+        "confirm": "Tasdiqlash",
+        "save": "Saqlash",
+        "actions": "Amallar",
+        "edit": "Tahrirlash",
+        "delete": "O'chirish",
+        "archive": "Arxivlash",
+        "unarchive": "Arxivdan chiqarish",
+        "viewProfile": "Profilni ko'rish",
+        "makePayment": "To'lov qilish"
+    }
+}

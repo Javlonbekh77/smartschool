@@ -1,0 +1,85 @@
+{
+    "landing": {
+        "title": "Smart School Manager",
+        "headline": "Manage your school easily and effectively",
+        "subheadline": "Smart School Manager is a unified platform to track students, staff, payments, and everything in one place.",
+        "cta": "Go to Dashboard",
+        "rights": "All rights reserved."
+    },
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "students": "Students",
+        "staff": "Staff",
+        "grades": "Grades",
+        "positions": "Positions",
+        "tests": "Test Results",
+        "expenses": "Expenses",
+        "reports": "Reports"
+    },
+    "header": {
+        "language": "Language",
+        "myAccount": "My Account",
+        "settings": "Settings",
+        "support": "Support",
+        "logout": "Logout"
+    },
+    "dashboard": {
+        "totalActiveStudents": "Total Active Students",
+        "totalStaffMembers": "Total Staff Members",
+        "currentMonthRevenue": "Current Month Revenue",
+        "currentMonthRevenueDesc": "Based on active student fees",
+        "currentMonthExpenses": "Current Month Expenses",
+        "currentMonthExpensesDesc": "Total for this month",
+        "monthlyAnalysis": "Monthly Analysis",
+        "topDebtors": "Top Debtors",
+        "topDebtorsDesc": "Students with the largest outstanding balances."
+    },
+    "students": {
+        "title": "Students",
+        "description": "Manage your students and their payments.",
+        "addStudent": "Add Student"
+    },
+    "staff": {
+        "title": "Staff",
+        "description": "Manage your school's staff and their salaries.",
+        "addAttendance": "Add Attendance",
+        "addStaff": "Add Staff"
+    },
+    "grades": {
+        "title": "Grades",
+        "description": "Information on finances and student numbers by grade."
+    },
+    "positions": {
+        "title": "Positions",
+        "description": "Manage job positions and their payment structures.",
+        "addPosition": "Add Position"
+    },
+    "tests": {
+        "title": "Test Results",
+        "description": "Track and manage student test results by month and grade.",
+        "addTestResult": "Add Test Result"
+    },
+    "expenses": {
+        "title": "Expenses",
+        "description": "Track all operational expenses.",
+        "addExpense": "Add Expense"
+    },
+    "reports": {
+        "title": "AI Debtor Report",
+        "description": "Generate a summary report of students with outstanding balances using AI."
+    },
+    "common": {
+        "loading": "Loading...",
+        "back": "Back",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "archive": "Archive",
+        "unarchive": "Unarchive",
+        "viewProfile": "View Profile",
+        "makePayment": "Make Payment"
+    }
+}

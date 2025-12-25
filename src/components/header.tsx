@@ -12,6 +12,7 @@ import {
   FileText,
   BarChart3,
   ArrowLeft,
+  Languages,
 } from 'lucide-react';
 import {
   Sheet,
@@ -26,28 +27,34 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem
 } from '@/components/ui/dropdown-menu';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useI18n } from '@/context/i18n';
 
 const navItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Bosh sahifa' },
-  { href: '/students', icon: GraduationCap, label: "O'quvchilar" },
-  { href: '/staff', icon: Users, label: 'Xodimlar' },
-  { href: '/grades', icon: BarChart3, label: 'Sinflar' },
-  { href: '/positions', icon: Briefcase, label: 'Kasblar' },
-  { href: '/tests', icon: ClipboardList, label: 'Test natijalari' },
-  { href: '/expenses', icon: Wallet, label: 'Xarajatlar' },
-  { href: '/reports', icon: FileText, label: 'Hisobotlar' },
+  { href: '/dashboard', icon: LayoutDashboard, labelKey: 'sidebar.dashboard' },
+  { href: '/students', icon: GraduationCap, labelKey: 'sidebar.students' },
+  { href: '/staff', icon: Users, labelKey: 'sidebar.staff' },
+  { href: '/grades', icon: BarChart3, labelKey: 'sidebar.grades' },
+  { href: '/positions', icon: Briefcase, labelKey: 'sidebar.positions' },
+  { href: '/tests', icon: ClipboardList, labelKey: 'sidebar.tests' },
+  { href: '/expenses', icon: Wallet, labelKey: 'sidebar.expenses' },
+  { href: '/reports', icon: FileText, labelKey: 'sidebar.reports' },
 ];
 
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const currentPage =
-    navItems.find((item) => pathname.startsWith(item.href))?.label ||
-    'Smart School Manager';
+  const { t, language, setLanguage } = useI18n();
+
+  const currentPageLabelKey =
+    navItems.find((item) => pathname.startsWith(item.href))?.labelKey || 'Smart School Manager';
+  
+  const currentPage = t(currentPageLabelKey);
   
   const isSubPage = navItems.some(item => pathname.startsWith(item.href) && pathname !== item.href);
 
@@ -79,7 +86,7 @@ export function Header() {
                 )}
               >
                 <item.icon className="h-5 w-5" />
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             ))}
           </nav>
@@ -94,7 +101,24 @@ export function Header() {
         )}
         <h1 className="font-headline text-xl">{currentPage}</h1>
       </div>
-      <div className="ml-auto flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Languages className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>{t('header.language')}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup value={language} onValueChange={(value) => setLanguage(value as 'uz' | 'ru' | 'en')}>
+              <DropdownMenuRadioItem value="uz">O'zbekcha</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="ru">Русский</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -113,12 +137,12 @@ export function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('header.myAccount')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem>{t('header.settings')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('header.support')}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem>{t('header.logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -22,20 +22,22 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useI18n } from '@/context/i18n';
 
 const navItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Bosh sahifa' },
-  { href: '/students', icon: GraduationCap, label: "O'quvchilar" },
-  { href: '/staff', icon: Users, label: 'Xodimlar' },
-  { href: '/grades', icon: BarChart3, label: 'Sinflar' },
-  { href: '/positions', icon: Briefcase, label: 'Kasblar' },
-  { href: '/tests', icon: ClipboardList, label: 'Test natijalari' },
-  { href: '/expenses', icon: Wallet, label: 'Xarajatlar' },
-  { href: '/reports', icon: FileText, label: 'Hisobotlar' },
+  { href: '/dashboard', icon: LayoutDashboard, labelKey: 'sidebar.dashboard' },
+  { href: '/students', icon: GraduationCap, labelKey: 'sidebar.students' },
+  { href: '/staff', icon: Users, labelKey: 'sidebar.staff' },
+  { href: '/grades', icon: BarChart3, labelKey: 'sidebar.grades' },
+  { href: '/positions', icon: Briefcase, labelKey: 'sidebar.positions' },
+  { href: '/tests', icon: ClipboardList, labelKey: 'sidebar.tests' },
+  { href: '/expenses', icon: Wallet, labelKey: 'sidebar.expenses' },
+  { href: '/reports', icon: FileText, labelKey: 'sidebar.reports' },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { t } = useI18n();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -60,10 +62,10 @@ export function Sidebar() {
                   )}
                 >
                   <item.icon className="h-5 w-5" />
-                  <span className="sr-only">{item.label}</span>
+                  <span className="sr-only">{t(item.labelKey)}</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">{item.label}</TooltipContent>
+              <TooltipContent side="right">{t(item.labelKey)}</TooltipContent>
             </Tooltip>
           ))}
         </TooltipProvider>
