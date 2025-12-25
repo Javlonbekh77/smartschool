@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { STAFF as initialStaff, POSITIONS, ATTENDANCE as initialAttendance } from '@/lib/data';
-import type { Staff, Attendance, Position, DailyHours } from '@/lib/types';
+import type { Staff, Attendance, Position } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -27,6 +27,7 @@ import { AddStaffDialog } from '@/components/dialogs/add-staff-dialog';
 import { EditStaffDialog } from '@/components/dialogs/edit-staff-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-row-actions';
+import { AddAttendanceDialog } from '@/components/dialogs/add-attendance-dialog';
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<Staff[]>(initialStaff);
@@ -36,6 +37,7 @@ export default function StaffPage() {
     add: false,
     edit: false,
     delete: false,
+    addAttendance: false,
   });
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
 
@@ -119,6 +121,26 @@ export default function StaffPage() {
     closeDialog('delete');
   };
 
+  const handleAddAttendance = (
+    records: { staffId: string; hours: number }[],
+    date: string
+  ) => {
+    const newAttendance: Attendance[] = records
+      .filter(r => r.hours > 0)
+      .map(r => ({
+        id: `att-${date}-${r.staffId}-${Math.random()}`,
+        staffId: r.staffId,
+        date: date,
+        hours: r.hours,
+      }));
+    
+    // Remove existing records for that date to avoid duplicates
+    const updatedAttendance = attendance.filter(a => a.date !== date);
+
+    setAttendance([...updatedAttendance, ...newAttendance]);
+    closeDialog('addAttendance');
+  };
+
   return (
     <>
       <Card>
@@ -130,7 +152,13 @@ export default function StaffPage() {
                 Manage your school's staff and their salaries.
               </CardDescription>
             </div>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              <Button size="sm" className="gap-1" onClick={() => openDialog('addAttendance')}>
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Add Attendance
+                </span>
+              </Button>
               <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -223,6 +251,12 @@ export default function StaffPage() {
         onConfirm={handleDeleteStaff}
         title="Xodimni o'chirish"
         description={`Haqiqatan ham ${selectedStaff?.fullName}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
+      />
+       <AddAttendanceDialog
+        isOpen={dialogState.addAttendance}
+        onClose={() => closeDialog('addAttendance')}
+        onAddAttendance={handleAddAttendance}
+        staff={staff}
       />
     </>
   );
