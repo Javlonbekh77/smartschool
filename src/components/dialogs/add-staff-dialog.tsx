@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Position, Staff, WorkDay } from "@/lib/types";
 import { Checkbox } from "../ui/checkbox";
+import { useEffect } from "react";
 
 interface AddStaffDialogProps {
   isOpen: boolean;
@@ -48,7 +49,6 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
     control,
     reset,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<StaffFormData>({
     resolver: zodResolver(staffSchema),
@@ -57,13 +57,23 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
     }
   });
 
-  const { fields, replace } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "workSchedule",
   });
 
   const selectedPositionId = watch("positionId");
   const selectedPosition = positions.find(p => p.id === selectedPositionId);
+  
+  useEffect(() => {
+    if (isOpen) {
+      reset({
+        fullName: '',
+        positionId: undefined,
+        workSchedule: weekDays.map(day => ({ day, hours: 0, isWorkingDay: false })),
+      });
+    }
+  }, [isOpen, reset])
 
 
   const onSubmit = (data: StaffFormData) => {
@@ -76,16 +86,11 @@ export function AddStaffDialog({ isOpen, onClose, onAddStaff, positions }: AddSt
     };
     
     onAddStaff(newStaff);
-    reset();
-    onClose();
+    handleClose();
   };
 
   const handleClose = () => {
-    reset({
-        fullName: '',
-        positionId: undefined,
-        workSchedule: weekDays.map(day => ({ day, hours: 0, isWorkingDay: false })),
-    });
+    reset();
     onClose();
   }
 

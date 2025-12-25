@@ -9,7 +9,7 @@ import {
   CardTitle,
   CardFooter,
 } from '@/components/ui/card';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Pencil } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { STAFF as initialStaff, POSITIONS, ATTENDANCE as initialAttendance } from '@/lib/data';
-import type { Staff, Attendance, Position, WorkDay } from '@/lib/types';
+import type { Staff, Attendance, Position, DailyHours } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -27,6 +27,7 @@ import { AddStaffDialog } from '@/components/dialogs/add-staff-dialog';
 import { EditStaffDialog } from '@/components/dialogs/edit-staff-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-row-actions';
+import { EditHoursDialog } from '@/components/dialogs/edit-hours-dialog';
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<Staff[]>(initialStaff);
@@ -36,6 +37,7 @@ export default function StaffPage() {
     add: false,
     edit: false,
     delete: false,
+    editHours: false,
   });
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
 
@@ -65,8 +67,7 @@ export default function StaffPage() {
     const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
 
     if (member.position.type === 'monthly') {
-      // Pay full salary if they worked at least once this month
-      return memberAttendance.length > 0 ? member.position.rate : 0;
+      return member.position.rate;
     }
     
     if (member.position.type === 'hourly') {
@@ -75,6 +76,14 @@ export default function StaffPage() {
     }
 
     return 0;
+  };
+  
+   const calculateHours = (member: Staff) => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
+    return memberAttendance.reduce((sum, a) => sum + a.hours, 0);
   };
   
   const handleAddStaff = (newStaffData: Omit<Staff, 'id' | 'avatarUrl'>) => {
@@ -119,6 +128,20 @@ export default function StaffPage() {
     setStaff([...initialStaff]);
     closeDialog('delete');
   };
+  
+  const handleUpdateHours = (staffId: string, dailyHours: DailyHours[]) => {
+    const otherAttendance = attendance.filter(a => a.staffId !== staffId);
+    
+    const updatedHours = dailyHours.map(d => ({
+        id: `att-${d.date}-${staffId}`, // This might cause duplicate IDs if not careful
+        staffId: staffId,
+        date: d.date,
+        hours: d.hours
+    }));
+
+    setAttendance([...otherAttendance, ...updatedHours]);
+    closeDialog('editHours');
+  };
 
   return (
     <>
@@ -148,6 +171,7 @@ export default function StaffPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Position</TableHead>
                 <TableHead>Salary / Rate</TableHead>
+                <TableHead>Current Month Hours</TableHead>
                 <TableHead className="text-right">
                   Current Month Salary
                 </TableHead>
@@ -182,6 +206,18 @@ export default function StaffPage() {
                   <TableCell>
                     {member.position.rate.toLocaleString()}
                     {member.position.type === 'hourly' ? ' so\'m / soat' : ' so\'m / oy'}
+                  </TableCell>
+                  <TableCell>
+                     {member.position.type === 'hourly' ? (
+                       <div className="flex items-center gap-2">
+                         <span>{calculateHours(member)} soat</span>
+                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openDialog('editHours', member)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                         </Button>
+                       </div>
+                     ) : (
+                        <span className="text-muted-foreground">-</span>
+                     )}
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     {calculateSalary(member)?.toLocaleString()} so'm
@@ -224,6 +260,13 @@ export default function StaffPage() {
         onConfirm={handleDeleteStaff}
         title="Xodimni o'chirish"
         description={`Haqiqatan ham ${selectedStaff?.fullName}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
+      />
+      <EditHoursDialog 
+        isOpen={dialogState.editHours}
+        onClose={() => closeDialog('editHours')}
+        staff={selectedStaff}
+        attendance={attendance}
+        onUpdateHours={handleUpdateHours}
       />
     </>
   );

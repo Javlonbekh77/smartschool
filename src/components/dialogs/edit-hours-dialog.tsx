@@ -49,7 +49,7 @@ export function EditHoursDialog({
     register,
     control,
     handleSubmit,
-    setValue,
+    reset,
     formState: { errors },
   } = useForm<HoursFormData>({
     resolver: zodResolver(hoursSchema),
@@ -75,21 +75,40 @@ export function EditHoursDialog({
       
       const dailyHours = monthAttendance.map(record => {
         return { date: record.date, hours: record.hours || 0 };
-      });
+      }).filter(d => d.hours > 0); // Only show days that were worked
       
       replace(dailyHours);
+    } else {
+        replace([]);
     }
   }, [isOpen, staff, attendance, replace, today]);
 
   const onSubmit = (data: HoursFormData) => {
     if (!staff) return;
-    onUpdateHours(staff.id, data.days);
+    
+    // We need to merge the updated days with the existing non-edited days for the month
+    const monthAttendance = attendance.filter(a => 
+        a.staffId === staff.id &&
+        new Date(a.date).getMonth() === today.getMonth() &&
+        new Date(a.date).getFullYear() === today.getFullYear()
+    );
+
+    const updatedDaysMap = new Map(data.days.map(d => [d.date, d]));
+    
+    const finalDailyHours: DailyHours[] = monthAttendance.map(a => {
+        if(updatedDaysMap.has(a.date)) {
+            return { date: a.date, hours: updatedDaysMap.get(a.date)!.hours }
+        }
+        return { date: a.date, hours: a.hours };
+    });
+
+
+    onUpdateHours(staff.id, finalDailyHours);
     handleClose();
   };
 
   const handleClose = () => {
-    // Note: We don't reset the form here to avoid flashing empty state
-    // It's re-populated by the useEffect hook anyway
+    reset();
     onClose();
   };
   
