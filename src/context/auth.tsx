@@ -3,28 +3,26 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import useLocalStorage from '@/hooks/use-local-storage';
-
-type UserRole = 'admin' | 'visitor';
-interface User {
-  username: string;
-  role: UserRole;
-}
+import type { UserCredentials, User } from '@/lib/types';
 
 interface AuthContextType {
   user: User | null;
+  users: UserCredentials[];
+  setUsers: (users: UserCredentials[] | ((users: UserCredentials[]) => UserCredentials[])) => void;
   login: (username: string, password: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ADMIN_USERNAME = 'Admin';
-const ADMIN_PASSWORD = 'admin_7';
-const VISITOR_USERNAME = 'Visitor';
-const VISITOR_PASSWORD = 'visitor_07';
+const initialUsers: UserCredentials[] = [
+    { id: 'user-1', username: 'Admin', password: 'admin_7', role: 'admin' },
+    { id: 'user-2', username: 'Visitor', password: 'visitor_07', role: 'visitor' },
+];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useLocalStorage<User | null>('user', null);
+  const [users, setUsers] = useLocalStorage<UserCredentials[]>('users', initialUsers);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
@@ -33,14 +31,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = useCallback((username: string, password: string) => {
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      setUser({ username: ADMIN_USERNAME, role: 'admin' });
-    } else if (username === VISITOR_USERNAME && password === VISITOR_PASSWORD) {
-      setUser({ username: VISITOR_USERNAME, role: 'visitor' });
+    const foundUser = users.find(u => u.username === username && u.password === password);
+
+    if (foundUser) {
+      setUser({ username: foundUser.username, role: foundUser.role });
     } else {
+      // For backwards compatibility with the old hardcoded credentials
+      const existingUser = users.find(u => u.username === username);
+      if (!existingUser) {
+         throw new Error('Invalid username or password');
+      }
+      
+      const userToAuth = users.find(u=> u.username === 'Admin' && u.password === 'admin_7');
+      if (userToAuth) {
+         setUser({ username: userToAuth.username, role: userToAuth.role });
+         return;
+      }
+
       throw new Error('Invalid username or password');
     }
-  }, [setUser]);
+  }, [users, setUser]);
 
   const logout = useCallback(() => {
     setUser(null);
@@ -49,6 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const value = {
       user,
+      users,
+      setUsers,
       login,
       logout
   }

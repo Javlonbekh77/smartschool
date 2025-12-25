@@ -71,3 +71,15 @@ export type DailyHours = {
   date: string;
   hours: number;
 };
+
+export type UserRole = 'admin' | 'visitor';
+
+export interface User {
+  username: string;
+  role: UserRole;
+}
+
+export interface UserCredentials extends User {
+    id: string;
+    password: string;
+}
