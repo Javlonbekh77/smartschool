@@ -131,7 +131,7 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
         </Badge>
       ),
       filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id))
+        return value === row.getValue(id)
       }
     },
   ];
