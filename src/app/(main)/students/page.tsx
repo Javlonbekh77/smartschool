@@ -16,9 +16,10 @@ import { AddStudentDialog } from '@/components/dialogs/add-student-dialog';
 import { MakePaymentDialog } from '@/components/dialogs/make-payment-dialog';
 import { EditStudentDialog } from '@/components/dialogs/edit-student-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 export default function StudentsPage() {
-  const [students, setStudents] = useState<Student[]>(initialStudents);
+  const [students, setStudents] = useLocalStorage<Student[]>('students', initialStudents);
   const [dialogState, setDialogState] = useState({
     add: false,
     payment: false,
@@ -45,44 +46,35 @@ export default function StudentsPage() {
       avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
       ...newStudent
     };
-    initialStudents.push(studentToAdd);
-    setStudents([...initialStudents]);
+    setStudents(prev => [...prev, studentToAdd]);
   };
 
   const handleMakePayment = (studentId: string, amount: number) => {
-    const studentIndex = initialStudents.findIndex(s => s.id === studentId);
-    if (studentIndex !== -1) {
-      initialStudents[studentIndex].balance += amount;
-    }
-    setStudents([...initialStudents]);
+    setStudents(prev => prev.map(s => 
+      s.id === studentId ? { ...s, balance: s.balance + amount } : s
+    ));
   };
   
   const handleUpdateStudent = (studentId: string, data: Omit<Student, 'id' | 'balance' | 'isArchived' | 'avatarUrl'>) => {
-    const studentIndex = initialStudents.findIndex(s => s.id === studentId);
-    if (studentIndex !== -1) {
-        const currentAvatar = initialStudents[studentIndex].avatarUrl;
-        initialStudents[studentIndex] = { ...initialStudents[studentIndex], ...data, avatarUrl: currentAvatar, id: studentId };
-    }
-    setStudents([...initialStudents]);
+    setStudents(prev => prev.map(s => {
+      if (s.id === studentId) {
+        return { ...s, ...data };
+      }
+      return s;
+    }));
   };
 
   const handleToggleArchive = () => {
     if (!selectedStudent) return;
-    const studentIndex = initialStudents.findIndex(s => s.id === selectedStudent.id);
-    if (studentIndex !== -1) {
-      initialStudents[studentIndex].isArchived = !initialStudents[studentIndex].isArchived;
-    }
-    setStudents([...initialStudents]);
+    setStudents(prev => prev.map(s => 
+        s.id === selectedStudent.id ? { ...s, isArchived: !s.isArchived } : s
+    ));
     closeDialog('archive');
   };
 
   const handleDeleteStudent = () => {
     if (!selectedStudent) return;
-    const studentIndex = initialStudents.findIndex(s => s.id === selectedStudent.id);
-    if (studentIndex !== -1) {
-      initialStudents.splice(studentIndex, 1);
-    }
-    setStudents([...initialStudents]);
+    setStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
     closeDialog('delete');
   };
 

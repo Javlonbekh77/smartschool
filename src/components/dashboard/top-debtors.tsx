@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardContent,
@@ -14,11 +15,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { STUDENTS } from '@/lib/data';
+import { STUDENTS as initialStudents } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import useLocalStorage from '@/hooks/use-local-storage';
+import type { Student } from '@/lib/types';
 
 export function TopDebtors() {
-  const debtors = STUDENTS
+  const [students] = useLocalStorage<Student[]>('students', initialStudents);
+
+  const debtors = students
     .filter(s => s.balance < 0)
     .sort((a, b) => a.balance - b.balance)
     .slice(0, 5);

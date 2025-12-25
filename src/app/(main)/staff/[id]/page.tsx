@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, DollarSign, Clock, CalendarCheck, CalendarDays } from 'lucide-react';
+import { Briefcase, DollarSign, CalendarCheck, CalendarDays } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import type { Staff, Attendance } from '@/lib/types';
 import { format, getDaysInMonth, startOfMonth, getDate } from 'date-fns';
@@ -23,23 +23,31 @@ import {
     TableRow,
   } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-const findStaffMember = (id: string, staffList: Staff[]) => staffList.find(s => s.id === id);
+import useLocalStorage from '@/hooks/use-local-storage';
 
 export default function StaffProfilePage() {
   const router = useRouter();
   const params = useParams();
   const staffId = typeof params.id === 'string' ? params.id : '';
   
-  const [staffList, setStaffList] = useState(initialStaff);
-  const [attendance, setAttendance] = useState(initialAttendance);
-  const staffMember = findStaffMember(staffId, staffList);
+  const [staffList] = useLocalStorage<Staff[]>('staff', initialStaff);
+  const [attendance] = useLocalStorage<Attendance[]>('attendance', initialAttendance);
+
+  const [staffMember, setStaffMember] = useState<Staff | undefined>(undefined);
 
   useEffect(() => {
-    if (!staffMember) {
-      router.push('/staff');
+    const member = staffList.find(s => s.id === staffId);
+    if (!member) {
+      // Small delay to allow localStorage to load, then push if still not found
+      setTimeout(() => {
+          if (!staffList.find(s => s.id === staffId)) {
+             router.push('/staff');
+          }
+      }, 500)
+    } else {
+        setStaffMember(member);
     }
-  }, [staffMember, router]);
+  }, [staffId, staffList, router]);
 
   const today = new Date();
   const currentMonth = today.getMonth();
@@ -54,9 +62,7 @@ export default function StaffProfilePage() {
   const calculateSalary = () => {
     if (!staffMember) return 0;
     if (staffMember.position.type === 'monthly') {
-      // Check if there is any attendance record for the current month.
-      const hasWorked = memberAttendanceThisMonth.length > 0;
-      return hasWorked ? staffMember.position.rate : 0;
+      return staffMember.position.rate;
     }
     if (staffMember.position.type === 'hourly') {
       const totalHours = memberAttendanceThisMonth.reduce((sum, h) => sum + h.hours, 0);
@@ -64,16 +70,17 @@ export default function StaffProfilePage() {
     }
     return 0;
   }
-
-  const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   
   const daysInMonth = getDaysInMonth(today);
-  const monthStartDate = startOfMonth(today);
   const monthDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const attendanceMap = new Map(memberAttendanceThisMonth.map(att => [getDate(new Date(att.date)), att.hours]));
 
   if (!staffMember) {
-    return null;
+    return (
+        <div className="flex justify-center items-center h-64">
+            <p>Loading staff member...</p>
+        </div>
+    );
   }
 
   return (
@@ -130,7 +137,7 @@ export default function StaffProfilePage() {
                 <CardContent>
                    <ScrollArea className="w-full">
                      <div className="overflow-x-auto">
-                        <Table className="min-w-full">
+                        <Table className="min-w-full w-[800px]">
                             <TableHeader>
                                 <TableRow>
                                     {monthDays.map(day => {

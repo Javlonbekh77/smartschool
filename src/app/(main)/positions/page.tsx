@@ -26,9 +26,10 @@ import { AddPositionDialog } from '@/components/dialogs/add-position-dialog';
 import { EditPositionDialog } from '@/components/dialogs/edit-position-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { PositionDataTableRowActions } from '@/components/positions/position-data-table-row-actions';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 export default function PositionsPage() {
-  const [positions, setPositions] = useState<Position[]>(initialPositions);
+  const [positions, setPositions] = useLocalStorage<Position[]>('positions', initialPositions);
   const [dialogState, setDialogState] = useState({
     add: false,
     edit: false,
@@ -51,26 +52,17 @@ export default function PositionsPage() {
         id: `pos${Date.now()}`,
         ...newPosition
     };
-    initialPositions.push(positionToAdd);
-    setPositions([...initialPositions]);
+    setPositions(prev => [...prev, positionToAdd]);
   };
   
   const handleUpdatePosition = (positionId: string, data: Omit<Position, 'id'>) => {
-    const posIndex = initialPositions.findIndex(p => p.id === positionId);
-    if (posIndex !== -1) {
-      initialPositions[posIndex] = { ...initialPositions[posIndex], ...data };
-    }
-    setPositions([...initialPositions]);
+    setPositions(prev => prev.map(p => p.id === positionId ? { ...p, ...data } : p));
     closeDialog('edit');
   };
 
   const handleDeletePosition = () => {
     if (!selectedPosition) return;
-    const posIndex = initialPositions.findIndex(p => p.id === selectedPosition.id);
-    if (posIndex !== -1) {
-      initialPositions.splice(posIndex, 1);
-    }
-    setPositions([...initialPositions]);
+    setPositions(prev => prev.filter(p => p.id !== selectedPosition.id));
     closeDialog('delete');
   };
 

@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { STAFF as initialStaff, POSITIONS, ATTENDANCE as initialAttendance } from '@/lib/data';
+import { STAFF as initialStaff, POSITIONS as initialPositions, ATTENDANCE as initialAttendance } from '@/lib/data';
 import type { Staff, Attendance, Position, WorkDay } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -28,10 +28,12 @@ import { EditStaffDialog } from '@/components/dialogs/edit-staff-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-row-actions';
 import { AddAttendanceDialog } from '@/components/dialogs/add-attendance-dialog';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 export default function StaffPage() {
-  const [staff, setStaff] = useState<Staff[]>(initialStaff);
-  const [attendance, setAttendance] = useState<Attendance[]>(initialAttendance);
+  const [staff, setStaff] = useLocalStorage<Staff[]>('staff', initialStaff);
+  const [positions, setPositions] = useLocalStorage<Position[]>('positions', initialPositions);
+  const [attendance, setAttendance] = useLocalStorage<Attendance[]>('attendance', initialAttendance);
 
   const [dialogState, setDialogState] = useState({
     add: false,
@@ -66,8 +68,7 @@ export default function StaffPage() {
     const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
 
     if (member.position.type === 'monthly') {
-      // If they worked at least one day this month, pay full salary. Otherwise 0.
-      return memberAttendance.length > 0 ? member.position.rate : 0;
+      return member.position.rate;
     }
     
     if (member.position.type === 'hourly') {
@@ -93,47 +94,22 @@ export default function StaffPage() {
         avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
         ...newStaffData
     };
-    initialStaff.push(staffToAdd); // Mutate initialStaff
-    setStaff([...initialStaff]);   // Trigger re-render
+    setStaff(prev => [...prev, staffToAdd]);
     closeDialog('add');
   };
 
-  const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl' | 'position'> & { positionId?: string }>) => {
-    const { positionId, ...restData } = data;
-    const position = positionId ? POSITIONS.find(p => p.id === positionId) : undefined;
-  
-    setStaff(prevStaff => {
-      const staffIndex = prevStaff.findIndex(s => s.id === staffId);
-      if (staffIndex === -1) return prevStaff;
-  
-      const updatedStaffList = [...prevStaff];
-      const currentStaff = updatedStaffList[staffIndex];
-  
-      updatedStaffList[staffIndex] = {
-        ...currentStaff,
-        ...restData,
-        position: position || currentStaff.position, // Keep old position if new one not found/provided
-      };
-  
-      // Also update the master list
-      const masterIndex = initialStaff.findIndex(s => s.id === staffId);
-      if (masterIndex !== -1) {
-        initialStaff[masterIndex] = updatedStaffList[staffIndex];
-      }
-  
-      return updatedStaffList;
-    });
-  
-    closeDialog('edit');
+  const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl'>>) => {
+      setStaff(prevStaff => 
+          prevStaff.map(s => s.id === staffId ? { ...s, ...data } : s)
+      );
+      closeDialog('edit');
   };
   
   const handleDeleteStaff = () => {
     if (!selectedStaff) return;
-    const staffIndex = initialStaff.findIndex(s => s.id === selectedStaff.id);
-    if (staffIndex !== -1) {
-      initialStaff.splice(staffIndex, 1);
-    }
     setStaff(prev => prev.filter(s => s.id !== selectedStaff.id));
+    // Also remove their attendance records
+    setAttendance(prev => prev.filter(a => a.staffId !== selectedStaff.id));
     closeDialog('delete');
   };
 
@@ -141,24 +117,22 @@ export default function StaffPage() {
     records: { staffId: string; hours: number }[],
     date: string
   ) => {
-    
-    // Remove existing records for that date to avoid duplicates
-    const otherDatesAttendance = initialAttendance.filter(a => a.date !== date);
+    setAttendance(prevAttendance => {
+        // Remove existing records for that date to avoid duplicates
+        const otherDatesAttendance = prevAttendance.filter(a => a.date !== date);
 
-    const newAttendance: Attendance[] = records
-      .filter(r => r.hours > 0)
-      .map(r => ({
-        id: `att-${date}-${r.staffId}-${Math.random()}`,
-        staffId: r.staffId,
-        date: date,
-        hours: r.hours,
-      }));
+        const newAttendance: Attendance[] = records
+          .filter(r => r.hours > 0)
+          .map(r => ({
+            id: `att-${date}-${r.staffId}-${Math.random()}`,
+            staffId: r.staffId,
+            date: date,
+            hours: r.hours,
+          }));
 
-    const updatedAttendance = [...otherDatesAttendance, ...newAttendance];
+        return [...otherDatesAttendance, ...newAttendance];
+    });
     
-    // Also update master list
-    initialAttendance.splice(0, initialAttendance.length, ...updatedAttendance);
-    setAttendance(updatedAttendance);
     closeDialog('addAttendance');
   };
 
@@ -259,14 +233,14 @@ export default function StaffPage() {
         isOpen={dialogState.add}
         onClose={() => closeDialog('add')}
         onAddStaff={handleAddStaff}
-        positions={POSITIONS}
+        positions={positions}
       />
        <EditStaffDialog
         isOpen={dialogState.edit}
         onClose={() => closeDialog('edit')}
         staff={selectedStaff}
         onUpdateStaff={handleUpdateStaff}
-        positions={POSITIONS}
+        positions={positions}
       />
       <ConfirmDialog
         isOpen={dialogState.delete}
@@ -279,7 +253,7 @@ export default function StaffPage() {
         isOpen={dialogState.addAttendance}
         onClose={() => closeDialog('addAttendance')}
         onAddAttendance={handleAddAttendance}
-        staff={initialStaff.filter(s => s.position.type === 'hourly')}
+        staff={staff.filter(s => s.position.type === 'hourly')}
       />
     </>
   );

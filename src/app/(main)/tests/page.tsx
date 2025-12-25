@@ -20,11 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 export default function TestsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [tests, setTests] = useState<Test[]>(initialTests);
-  const [testResults, setTestResults] = useState<TestResult[]>(initialTestResults);
+  const [tests, setTests] = useLocalStorage<Test[]>('tests', initialTests);
+  const [testResults, setTestResults] = useLocalStorage<TestResult[]>('testResults', initialTestResults);
+  const [students] = useLocalStorage<Student[]>('students', STUDENTS);
 
   const handleAddTest = (newTest: Omit<Test, 'id'>, results: Omit<TestResult, 'id' | 'testId'>[]) => {
     const testToAdd: Test = {
@@ -112,7 +114,7 @@ export default function TestsPage() {
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
         onAddTest={handleAddTest}
-        students={STUDENTS}
+        students={students}
       />
     </>
   );

@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardContent,
@@ -5,11 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { STUDENTS } from '@/lib/data';
+import { STUDENTS as initialStudents } from '@/lib/data';
 import { BarChart, TrendingUp, TrendingDown, Users } from 'lucide-react';
+import useLocalStorage from '@/hooks/use-local-storage';
+import type { Student } from '@/lib/types';
 
 export default function GradesPage() {
-  const gradesData = STUDENTS.reduce((acc, student) => {
+  const [students] = useLocalStorage<Student[]>('students', initialStudents);
+
+  const gradesData = students.reduce((acc, student) => {
     if (student.isArchived) return acc;
 
     if (!acc[student.grade]) {

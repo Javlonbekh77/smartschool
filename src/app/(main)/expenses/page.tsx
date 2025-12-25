@@ -22,11 +22,13 @@ import {
 import { EXPENSES as initialExpenses } from '@/lib/data';
 import type { Expense } from '@/lib/types';
 import { AddExpenseDialog } from '@/components/dialogs/add-expense-dialog';
+import useLocalStorage from '@/hooks/use-local-storage';
 
 export default function ExpensesPage() {
-  const [expenses, setExpenses] = useState<Expense[]>(initialExpenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpenses);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+  const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
   const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
@@ -34,7 +36,7 @@ export default function ExpensesPage() {
       id: `exp${Date.now()}`,
       ...newExpense,
     };
-    setExpenses(prev => [expenseToAdd, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    setExpenses(prev => [...prev, expenseToAdd]);
   };
 
   return (
@@ -68,7 +70,7 @@ export default function ExpensesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {expenses.map((expense) => (
+              {sortedExpenses.map((expense) => (
                 <TableRow key={expense.id}>
                   <TableCell className="font-medium">
                     {new Date(expense.date).toLocaleDateString()}

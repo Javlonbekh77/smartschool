@@ -1,5 +1,6 @@
-import { STUDENTS } from '@/lib/data';
-import { notFound } from 'next/navigation';
+'use client';
+import { STUDENTS as initialStudents } from '@/lib/data';
+import { notFound, useParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -11,12 +12,28 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { GraduationCap, Calendar, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
 import { format, addMonths, setDate } from 'date-fns';
+import useLocalStorage from '@/hooks/use-local-storage';
+import type { Student } from '@/lib/types';
+import { useEffect, useState } from 'react';
 
-export default function StudentProfilePage({ params }: { params: { id: string } }) {
-  const student = STUDENTS.find((s) => s.id === params.id);
+export default function StudentProfilePage() {
+  const params = useParams();
+  const id = typeof params.id === 'string' ? params.id : '';
+  const [students] = useLocalStorage<Student[]>('students', initialStudents);
+  const [student, setStudent] = useState<Student | undefined>(undefined);
+
+  useEffect(() => {
+    const foundStudent = students.find((s) => s.id === id);
+    if (foundStudent) {
+      setStudent(foundStudent);
+    } else {
+      notFound();
+    }
+  }, [id, students]);
+
 
   if (!student) {
-    notFound();
+    return null; // or a loading spinner
   }
 
   const getPaymentDeadline = () => {

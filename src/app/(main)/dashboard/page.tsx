@@ -1,3 +1,4 @@
+'use client';
 import {
   DollarSign,
   Users,
@@ -9,17 +10,23 @@ import {
 import { SummaryCard } from '@/components/dashboard/summary-card';
 import { FinancialChart } from '@/components/dashboard/financial-chart';
 import { TopDebtors } from '@/components/dashboard/top-debtors';
-import { STUDENTS, STAFF, EXPENSES } from '@/lib/data';
+import { STUDENTS as initialStudents, STAFF as initialStaff, EXPENSES as initialExpenses } from '@/lib/data';
+import useLocalStorage from '@/hooks/use-local-storage';
+import type { Student, Staff, Expense } from '@/lib/types';
 
 export default function DashboardPage() {
-  const totalStudents = STUDENTS.filter(s => !s.isArchived).length;
-  const totalStaff = STAFF.length;
+  const [students] = useLocalStorage<Student[]>('students', initialStudents);
+  const [staff] = useLocalStorage<Staff[]>('staff', initialStaff);
+  const [expenses] = useLocalStorage<Expense[]>('expenses', initialExpenses);
 
-  const currentMonthRevenue = STUDENTS
+  const totalStudents = students.filter(s => !s.isArchived).length;
+  const totalStaff = staff.length;
+
+  const currentMonthRevenue = students
     .filter(s => !s.isArchived)
     .reduce((acc, student) => acc + student.monthlyFee, 0);
 
-  const currentMonthExpenses = EXPENSES
+  const currentMonthExpenses = expenses
     .filter(e => new Date(e.date).getMonth() === new Date().getMonth())
     .reduce((acc, expense) => acc + expense.amount, 0);
 
