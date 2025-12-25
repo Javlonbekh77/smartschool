@@ -71,12 +71,21 @@ export default function StaffPage() {
     }
     
     if (member.position.type === 'hourly') {
-      const totalHours = memberAttendance.reduce((sum, a) => sum + a.hours, 0);
+      const totalHours = calculateTotalHours(member.id);
       return totalHours * member.position.rate;
     }
 
     return 0;
   };
+
+  const calculateTotalHours = (staffId: string) => {
+    const today = new Date();
+    const currentMonth = today.getUTCMonth();
+    const currentYear = today.getUTCFullYear();
+    
+    const memberAttendance = getAttendanceForMonth(staffId, currentMonth, currentYear);
+    return memberAttendance.reduce((sum, a) => sum + a.hours, 0);
+  }
   
   const handleAddStaff = (newStaffData: Omit<Staff, 'id' | 'avatarUrl'>) => {
     const staffToAdd: Staff = {
@@ -174,7 +183,7 @@ export default function StaffPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Position</TableHead>
-                <TableHead>Salary / Rate</TableHead>
+                <TableHead>Current Month Hours</TableHead>
                 <TableHead className="text-right">
                   Current Month Salary
                 </TableHead>
@@ -207,8 +216,10 @@ export default function StaffPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {member.position.rate.toLocaleString()}
-                    {member.position.type === 'hourly' ? ' so\'m / soat' : ' so\'m / oy'}
+                    {member.position.type === 'hourly' 
+                        ? `${calculateTotalHours(member.id)} soat`
+                        : <span className="text-muted-foreground">-</span>
+                    }
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     {calculateSalary(member)?.toLocaleString()} so'm
@@ -256,7 +267,7 @@ export default function StaffPage() {
         isOpen={dialogState.addAttendance}
         onClose={() => closeDialog('addAttendance')}
         onAddAttendance={handleAddAttendance}
-        staff={staff}
+        staff={staff.filter(s => s.position.type === 'hourly')}
       />
     </>
   );

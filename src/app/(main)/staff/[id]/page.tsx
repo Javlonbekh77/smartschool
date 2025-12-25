@@ -10,11 +10,20 @@ import {
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, DollarSign, Clock, CalendarDays } from 'lucide-react';
+import { Briefcase, DollarSign, Clock, CalendarDays, CalendarCheck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import type { Staff, Attendance } from '@/lib/types';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+  } from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const findStaffMember = (id: string, staffList: Staff[]) => staffList.find(s => s.id === id);
 
@@ -45,7 +54,7 @@ export default function StaffProfilePage() {
       a.staffId === staffMember.id &&
       new Date(a.date).getMonth() === currentMonth &&
       new Date(a.date).getFullYear() === currentYear
-  );
+  ).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const calculateSalary = () => {
     if (staffMember.position.type === 'monthly') {
@@ -59,8 +68,10 @@ export default function StaffProfilePage() {
   }
 
   const workedDays = memberAttendanceThisMonth.map(a => new Date(a.date));
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   return (
+    <div className="grid gap-6 lg:grid-cols-2">
     <Card>
       <CardHeader className="items-center text-center">
         <Avatar className="w-24 h-24 mb-4">
@@ -98,32 +109,105 @@ export default function StaffProfilePage() {
             </div>
           </div>
         </div>
-        
-        <div className="max-w-md mx-auto mt-6">
-           <Card>
-              <CardHeader>
+      </CardContent>
+    </Card>
+
+    <div className="space-y-6">
+        <Card>
+            <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <CalendarDays className="h-5 w-5" />
-                  Yo'qlama ({format(today, 'MMMM yyyy')})
+                <CalendarDays className="h-5 w-5" />
+                Yo'qlama ({format(today, 'MMMM yyyy')})
                 </CardTitle>
-              </CardHeader>
-              <CardContent className="flex justify-center">
-                  <Calendar
+            </CardHeader>
+            <CardContent className="flex justify-center">
+                <Calendar
                     mode="multiple"
                     selected={workedDays}
                     defaultMonth={today}
                     modifiers={{ 
-                      worked: workedDays,
-                     }}
+                    worked: workedDays,
+                    }}
                     modifiersClassNames={{
-                      worked: 'bg-primary text-primary-foreground',
+                    worked: 'bg-primary text-primary-foreground',
                     }}
                     className="p-0"
-                  />
-              </CardContent>
-           </Card>
-        </div>
-      </CardContent>
-    </Card>
+                />
+            </CardContent>
+        </Card>
+
+        {staffMember.position.type === 'hourly' && (
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                        <Clock className="h-5 w-5" />
+                        Ishlagan soatlar
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-48">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                <TableHead>Sana</TableHead>
+                                <TableHead className="text-right">Soat</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {memberAttendanceThisMonth.map(att => (
+                                    <TableRow key={att.id}>
+                                        <TableCell>{format(new Date(att.date), 'PPP')}</TableCell>
+                                        <TableCell className="text-right font-bold">{att.hours} soat</TableCell>
+                                    </TableRow>
+                                ))}
+                                 {memberAttendanceThisMonth.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={2} className="text-center text-muted-foreground">
+                                            Bu oy uchun yo'qlama mavjud emas.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
+        )}
+
+        {staffMember.position.type === 'hourly' && staffMember.workSchedule && (
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                        <CalendarCheck className="h-5 w-5" />
+                        Haftalik ish jadvali
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                     <Table>
+                        <TableHeader>
+                            <TableRow>
+                            <TableHead>Hafta kuni</TableHead>
+                            <TableHead className="text-right">Ish soati</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                           {weekDays.map(day => {
+                                const schedule = staffMember.workSchedule?.find(ws => ws.day === day);
+                                return (
+                                    <TableRow key={day} className={!schedule?.isWorkingDay ? 'text-muted-foreground' : ''}>
+                                        <TableCell>{day}</TableCell>
+                                        <TableCell className="text-right font-bold">
+                                            {schedule?.isWorkingDay ? `${schedule.hours} soat` : "Dam olish kuni"}
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                           })}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        )}
+    </div>
+    </div>
   );
 }
