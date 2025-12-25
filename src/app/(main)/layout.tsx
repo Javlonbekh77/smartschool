@@ -4,8 +4,7 @@ import { MainSidebar } from '@/components/main-sidebar';
 import { Header } from '@/components/header';
 import { useAuth } from '@/context/auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { useEffect, useState } from 'react';
 
 export default function MainLayout({
   children,
@@ -14,6 +13,7 @@ export default function MainLayout({
 }>) {
   const { user } = useAuth();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     if (user === null) {
@@ -30,16 +30,14 @@ export default function MainLayout({
   }
 
   return (
-    <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <MainSidebar userRole={user.role} username={user.username} />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 group-data-[state=expanded]:sm:pl-64 transition-[padding]">
-          <Header />
+        <MainSidebar userRole={user.role} username={user.username} isOpen={sidebarOpen} />
+        <div className={`flex flex-col sm:gap-4 sm:py-4 transition-all duration-300 ${sidebarOpen ? 'sm:pl-64' : 'sm:pl-14'}`}>
+          <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
           <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <SidebarInset>{children}</SidebarInset>
+            {children}
           </main>
         </div>
       </div>
-    </SidebarProvider>
   );
 }
