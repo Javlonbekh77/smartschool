@@ -10,10 +10,9 @@ import {
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, DollarSign, Clock, CalendarDays, CalendarCheck } from 'lucide-react';
+import { Briefcase, DollarSign, Clock, CalendarCheck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import type { Staff, Attendance } from '@/lib/types';
-import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import {
     Table,
@@ -67,7 +66,6 @@ export default function StaffProfilePage() {
     return 0;
   }
 
-  const workedDays = memberAttendanceThisMonth.map(a => new Date(a.date));
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   return (
@@ -113,35 +111,12 @@ export default function StaffProfilePage() {
     </Card>
 
     <div className="space-y-6">
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                <CalendarDays className="h-5 w-5" />
-                Yo'qlama ({format(today, 'MMMM yyyy')})
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-                <Calendar
-                    mode="multiple"
-                    selected={workedDays}
-                    defaultMonth={today}
-                    modifiers={{ 
-                    worked: workedDays,
-                    }}
-                    modifiersClassNames={{
-                    worked: 'bg-primary text-primary-foreground',
-                    }}
-                    className="p-0"
-                />
-            </CardContent>
-        </Card>
-
         {staffMember.position.type === 'hourly' && (
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
                         <Clock className="h-5 w-5" />
-                        Ishlagan soatlar
+                        Ishlagan soatlar ({format(today, 'MMMM yyyy')})
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -154,13 +129,14 @@ export default function StaffProfilePage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {memberAttendanceThisMonth.map(att => (
-                                    <TableRow key={att.id}>
-                                        <TableCell>{format(new Date(att.date), 'PPP')}</TableCell>
-                                        <TableCell className="text-right font-bold">{att.hours} soat</TableCell>
-                                    </TableRow>
-                                ))}
-                                 {memberAttendanceThisMonth.length === 0 && (
+                                {memberAttendanceThisMonth.length > 0 ? (
+                                    memberAttendanceThisMonth.map(att => (
+                                        <TableRow key={att.id}>
+                                            <TableCell>{format(new Date(att.date), 'PPP')}</TableCell>
+                                            <TableCell className="text-right font-bold">{att.hours} soat</TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
                                     <TableRow>
                                         <TableCell colSpan={2} className="text-center text-muted-foreground">
                                             Bu oy uchun yo'qlama mavjud emas.
