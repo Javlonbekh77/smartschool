@@ -93,40 +93,32 @@ export default function StaffPage() {
         avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
         ...newStaffData
     };
-    initialStaff.push(staffToAdd);
-    setStaff([...initialStaff]);
+    setStaff(prev => [...prev, staffToAdd]);
     closeDialog('add');
   };
 
   const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl'>>) => {
-    const staffIndex = initialStaff.findIndex(s => s.id === staffId);
-    if (staffIndex !== -1) {
-      const currentAvatar = initialStaff[staffIndex].avatarUrl;
-      const position = data.positionId ? POSITIONS.find(p => p.id === data.positionId) : initialStaff[staffIndex].position;
-      
-      if (!position) return;
+    setStaff(prevStaff => {
+        const staffIndex = prevStaff.findIndex(s => s.id === staffId);
+        if (staffIndex === -1) return prevStaff;
 
-      const updatedStaff: Staff = {
-        ...initialStaff[staffIndex],
-        ...data,
-        position,
-        id: staffId,
-        avatarUrl: currentAvatar,
-      };
+        const updatedStaff = [...prevStaff];
+        const position = data.positionId ? POSITIONS.find(p => p.id === data.positionId) : updatedStaff[staffIndex].position;
+        if (!position) return prevStaff;
 
-      initialStaff[staffIndex] = updatedStaff;
-    }
-    setStaff([...initialStaff]);
+        updatedStaff[staffIndex] = {
+            ...updatedStaff[staffIndex],
+            ...data,
+            position,
+        };
+        return updatedStaff;
+    });
     closeDialog('edit');
   };
   
   const handleDeleteStaff = () => {
     if (!selectedStaff) return;
-    const staffIndex = initialStaff.findIndex(s => s.id === selectedStaff.id);
-    if (staffIndex !== -1) {
-      initialStaff.splice(staffIndex, 1);
-    }
-    setStaff([...initialStaff]);
+    setStaff(prev => prev.filter(s => s.id !== selectedStaff.id));
     closeDialog('delete');
   };
 
@@ -134,6 +126,10 @@ export default function StaffPage() {
     records: { staffId: string; hours: number }[],
     date: string
   ) => {
+    
+    // Remove existing records for that date to avoid duplicates
+    const attendanceWithoutDate = attendance.filter(a => a.date !== date);
+
     const newAttendance: Attendance[] = records
       .filter(r => r.hours > 0)
       .map(r => ({
@@ -142,11 +138,8 @@ export default function StaffPage() {
         date: date,
         hours: r.hours,
       }));
-    
-    // Remove existing records for that date to avoid duplicates
-    const updatedAttendance = attendance.filter(a => a.date !== date);
 
-    setAttendance([...updatedAttendance, ...newAttendance]);
+    setAttendance([...attendanceWithoutDate, ...newAttendance]);
     closeDialog('addAttendance');
   };
 
