@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useI18n } from '@/context/i18n';
 import { useAuth } from '@/context/auth';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, labelKey: 'sidebar.dashboard' },
@@ -137,6 +138,7 @@ export function Header() {
         </SheetContent>
       </Sheet>
       <div className="flex items-center gap-2">
+        <SidebarTrigger className="hidden sm:flex"/>
         {isSubPage && (
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4" />

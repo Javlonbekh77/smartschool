@@ -2,19 +2,19 @@
 {
     "landing": {
         "title": "Smart School Manager",
-        "headline": "Maktabingizni oson va samarali boshqaring",
-        "subheadline": "Smart School Manager o'quvchilar, xodimlar, to'lovlar va barchasini bir joyda kuzatib borish uchun yagona platforma.",
+        "headline": "Maktabingiz Faoliyatini Samarali Boshqaring",
+        "subheadline": "O'quvchilar, xodimlar va moliyani misli ko'rilmagan samaradorlik bilan boshqarish uchun yagona platforma. Siz ta'limga e'tibor qarating, qolganini biz hal qilamiz.",
         "cta": "Boshqaruv paneliga o'tish",
         "rights": "Barcha huquqlar himoyalangan.",
-        "tagline": "Maktab boshqaruvining kelajagi",
-        "featuresTitle": "Yagona Platforma",
-        "featuresSubtitle": "Ta'lim muassasangizni boshqarish uchun to'liq yechim, o'quvchilarni ro'yxatga olishdan moliyaviy hisobotlargacha.",
-        "feature1Title": "O'quvchi va Xodimlar Boshqaruvi",
-        "feature1Desc": "Barcha o'quvchilar va xodimlarning ma'lumotlarini bir joyda saqlang va boshqaring.",
-        "feature2Title": "Moliyaviy Hisobot",
-        "feature2Desc": "To'lovlar, qoldiqlar, xarajatlarni osonlik bilan boshqaring va moliyaviy hisobotlarni yarating.",
-        "feature3Title": "Intuitiv Boshqaruv Paneli",
-        "feature3Desc": "Maktabingizning asosiy ko'rsatkichlarini bitta, ishlatish uchun qulay bo'lgan boshqaruv panelida ko'ring."
+        "tagline": "Ta'lim Boshqaruvining Kelajagi",
+        "featuresTitle": "Yagona, Qudratli Platforma",
+        "featuresSubtitle": "O'quvchilarni qabul qilishdan moliyaviy tahlilgacha, bizning keng qamrovli yechimimiz ta'lim muassasangizning barcha ehtiyojlarini qondirish uchun ishlab chiqilgan.",
+        "feature1Title": "O'quvchi va Xodimlar Hayot Sikli",
+        "feature1Desc": "O'quvchilar va xodimlarning to'liq ma'lumotlarini, qabul qilishdan tortib arxivlashgacha, barchasini bir markazlashtirilgan joyda boshqaring.",
+        "feature2Title": "Osonlashtirilgan Moliya",
+        "feature2Desc": "Muassasangizning moliyaviy barqarorligini ta'minlash uchun to'lovlar, balanslar, xarajatlarni osongina kuzatib boring va tushunarli moliyaviy hisobotlar yarating.",
+        "feature3Title": "Bir Qarashda Boshqaruv Paneli",
+        "feature3Desc": "Maktabingizning eng muhim ko'rsatkichlarining umumiy manzarasini bitta, intuitiv boshqaruv panelida ko'ring."
     },
     "sidebar": {
         "dashboard": "Bosh sahifa",

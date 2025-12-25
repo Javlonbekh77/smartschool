@@ -2,19 +2,19 @@
 {
     "landing": {
         "title": "Smart School Manager",
-        "headline": "Manage your school easily and effectively",
-        "subheadline": "Smart School Manager is a unified platform to track students, staff, payments, and everything in one place.",
+        "headline": "Streamline Your School's Operations",
+        "subheadline": "An all-in-one platform to manage students, staff, and finances with unparalleled efficiency. Focus on education, we'll handle the rest.",
         "cta": "Go to Dashboard",
         "rights": "All rights reserved.",
-        "tagline": "The Future of School Management",
-        "featuresTitle": "All-in-One Platform",
-        "featuresSubtitle": "A complete solution for managing your educational institution, from student enrollment to financial tracking.",
-        "feature1Title": "Student & Staff Management",
-        "feature1Desc": "Keep track of all student and staff records in one centralized location.",
-        "feature2Title": "Financial Tracking",
-        "feature2Desc": "Manage fees, balances, expenses, and generate financial reports with ease.",
-        "feature3Title": "Intuitive Dashboard",
-        "feature3Desc": "Get a bird's-eye view of your school's key metrics on a single, easy-to-use dashboard."
+        "tagline": "The Future of Educational Management",
+        "featuresTitle": "A Unified, Powerful Platform",
+        "featuresSubtitle": "From student enrollment to financial analytics, our comprehensive solution is designed to meet all the needs of your educational institution.",
+        "feature1Title": "Student & Staff Lifecycle",
+        "feature1Desc": "Manage complete records for students and staff, from admission and hiring to archiving, all in one centralized location.",
+        "feature2Title": "Effortless Financials",
+        "feature2Desc": "Easily track fees, balances, expenses, and generate insightful financial reports to keep your institution on a solid footing.",
+        "feature3Title": "At-a-Glance Dashboard",
+        "feature3Desc": "Gain a comprehensive, bird's-eye view of your school's most important metrics on a single, intuitive dashboard."
     },
     "sidebar": {
         "dashboard": "Dashboard",
