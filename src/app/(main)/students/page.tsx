@@ -62,6 +62,7 @@ export default function StudentsPage() {
       }
       return s;
     }));
+    closeDialog('edit');
   };
 
   const handleToggleArchive = () => {

@@ -253,7 +253,7 @@ export default function StaffPage() {
         isOpen={dialogState.addAttendance}
         onClose={() => closeDialog('addAttendance')}
         onAddAttendance={handleAddAttendance}
-        staff={staff.filter(s => s.position.type === 'hourly')}
+        staff={staff}
       />
     </>
   );

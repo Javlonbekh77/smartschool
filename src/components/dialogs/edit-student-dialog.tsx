@@ -62,7 +62,6 @@ export function EditStudentDialog({ isOpen, onClose, onUpdateStudent, student }:
   const onSubmit = (data: StudentFormData) => {
     if (!student) return;
     onUpdateStudent(student.id, data);
-    onClose();
   };
   
   if (!student) return null;

@@ -93,7 +93,6 @@ export function EditStaffDialog({ isOpen, onClose, onUpdateStaff, staff, positio
     };
 
     onUpdateStaff(staff.id, updatedStaffData);
-    onClose();
   };
   
   if (!staff) return null;
