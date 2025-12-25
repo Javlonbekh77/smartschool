@@ -1,10 +1,20 @@
+
 {
     "landing": {
         "title": "Smart School Manager",
         "headline": "Manage your school easily and effectively",
         "subheadline": "Smart School Manager is a unified platform to track students, staff, payments, and everything in one place.",
         "cta": "Go to Dashboard",
-        "rights": "All rights reserved."
+        "rights": "All rights reserved.",
+        "tagline": "The Future of School Management",
+        "featuresTitle": "All-in-One Platform",
+        "featuresSubtitle": "A complete solution for managing your educational institution, from student enrollment to financial tracking.",
+        "feature1Title": "Student & Staff Management",
+        "feature1Desc": "Keep track of all student and staff records in one centralized location.",
+        "feature2Title": "Financial Tracking",
+        "feature2Desc": "Manage fees, balances, expenses, and generate financial reports with ease.",
+        "feature3Title": "Intuitive Dashboard",
+        "feature3Desc": "Get a bird's-eye view of your school's key metrics on a single, easy-to-use dashboard."
     },
     "sidebar": {
         "dashboard": "Dashboard",
@@ -37,13 +47,22 @@
     "students": {
         "title": "Students",
         "description": "Manage your students and their payments.",
-        "addStudent": "Add Student"
+        "addStudent": "Add Student",
+        "archiveTitle": "Archive Student",
+        "archiveDescription": "Are you sure you want to archive {name}?",
+        "unarchiveTitle": "Unarchive Student",
+        "unarchiveDescription": "Are you sure you want to unarchive {name}?",
+        "deleteTitle": "Delete Student",
+        "deleteDescription": "Are you sure you want to delete {name}? This action cannot be undone."
     },
     "staff": {
         "title": "Staff",
         "description": "Manage your school's staff and their salaries.",
         "addAttendance": "Add Attendance",
-        "addStaff": "Add Staff"
+        "addStaff": "Add Staff",
+        "editDescription": "Update the staff member's details.",
+        "deleteTitle": "Delete Staff Member",
+        "deleteDescription": "Are you sure you want to delete {name}? This action cannot be undone."
     },
     "grades": {
         "title": "Grades",

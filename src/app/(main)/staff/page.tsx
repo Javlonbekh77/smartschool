@@ -29,8 +29,10 @@ import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-row-actions';
 import { AddAttendanceDialog } from '@/components/dialogs/add-attendance-dialog';
 import useLocalStorage from '@/hooks/use-local-storage';
+import { useI18n } from '@/context/i18n';
 
 export default function StaffPage() {
+  const { t } = useI18n();
   const [staff, setStaff] = useLocalStorage<Staff[]>('staff', initialStaff);
   const [positions, setPositions] = useLocalStorage<Position[]>('positions', initialPositions);
   const [attendance, setAttendance] = useLocalStorage<Attendance[]>('attendance', initialAttendance);
@@ -142,7 +144,7 @@ export default function StaffPage() {
   };
 
   if (!isMounted) {
-    return <div>Loading...</div>;
+    return <div>{t('common.loading')}</div>;
   }
 
   return (
@@ -151,22 +153,22 @@ export default function StaffPage() {
         <CardHeader>
           <div className="flex items-center gap-4">
             <div>
-              <CardTitle className="font-headline">Xodimlar</CardTitle>
+              <CardTitle className="font-headline">{t('staff.title')}</CardTitle>
               <CardDescription>
-                Manage your school's staff and their salaries.
+                {t('staff.description')}
               </CardDescription>
             </div>
             <div className="ml-auto flex items-center gap-2">
               <Button size="sm" className="gap-1" onClick={() => openDialog('addAttendance')}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Add Attendance
+                  {t('staff.addAttendance')}
                 </span>
               </Button>
               <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Add Staff
+                  {t('staff.addStaff')}
                 </span>
               </Button>
             </div>
@@ -255,8 +257,8 @@ export default function StaffPage() {
         isOpen={dialogState.delete}
         onClose={() => closeDialog('delete')}
         onConfirm={handleDeleteStaff}
-        title="Xodimni o'chirish"
-        description={`Haqiqatan ham ${selectedStaff?.fullName}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
+        title={t('staff.deleteTitle')}
+        description={t('staff.deleteDescription', { name: selectedStaff?.fullName })}
       />
        <AddAttendanceDialog
         isOpen={dialogState.addAttendance}

@@ -17,8 +17,10 @@ import { MakePaymentDialog } from '@/components/dialogs/make-payment-dialog';
 import { EditStudentDialog } from '@/components/dialogs/edit-student-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import useLocalStorage from '@/hooks/use-local-storage';
+import { useI18n } from '@/context/i18n';
 
 export default function StudentsPage() {
+  const { t } = useI18n();
   const [students, setStudents] = useLocalStorage<Student[]>('students', initialStudents);
   const [dialogState, setDialogState] = useState({
     add: false,
@@ -53,12 +55,14 @@ export default function StudentsPage() {
       ...newStudent
     };
     setStudents(prev => [...prev, studentToAdd]);
+    closeDialog('add');
   };
 
   const handleMakePayment = (studentId: string, amount: number) => {
     setStudents(prev => prev.map(s => 
       s.id === studentId ? { ...s, balance: s.balance + amount } : s
     ));
+    closeDialog('payment');
   };
   
   const handleUpdateStudent = (studentId: string, data: Omit<Student, 'id' | 'balance' | 'isArchived' | 'avatarUrl'>) => {
@@ -86,7 +90,7 @@ export default function StudentsPage() {
   };
 
   if (!isMounted) {
-    return <div>Loading...</div>;
+    return <div>{t('common.loading')}</div>;
   }
 
   return (
@@ -95,16 +99,16 @@ export default function StudentsPage() {
         <CardHeader>
           <div className="flex items-center gap-4">
             <div>
-              <CardTitle className="font-headline">O'quvchilar</CardTitle>
+              <CardTitle className="font-headline">{t('students.title')}</CardTitle>
               <CardDescription>
-                Manage your students and their payments.
+                {t('students.description')}
               </CardDescription>
             </div>
             <div className="ml-auto">
               <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Add Student
+                  {t('students.addStudent')}
                 </span>
               </Button>
             </div>
@@ -142,15 +146,15 @@ export default function StudentsPage() {
         isOpen={dialogState.archive}
         onClose={() => closeDialog('archive')}
         onConfirm={handleToggleArchive}
-        title={`O'quvchini ${selectedStudent?.isArchived ? "arxivdan chiqarish" : "arxivlash"}`}
-        description={`Haqiqatan ham ${selectedStudent?.fullName}ni ${selectedStudent?.isArchived ? "arxivdan chiqarmoqchimisiz" : "arxivlamoqchimisiz"}?`}
+        title={t(selectedStudent?.isArchived ? 'students.unarchiveTitle' : 'students.archiveTitle')}
+        description={t(selectedStudent?.isArchived ? 'students.unarchiveDescription' : 'students.archiveDescription', { name: selectedStudent?.fullName })}
       />
       <ConfirmDialog
         isOpen={dialogState.delete}
         onClose={() => closeDialog('delete')}
         onConfirm={handleDeleteStudent}
-        title="O'quvchini o'chirish"
-        description={`Haqiqatan ham ${selectedStudent?.fullName}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
+        title={t('students.deleteTitle')}
+        description={t('students.deleteDescription', { name: selectedStudent?.fullName })}
       />
     </>
   );

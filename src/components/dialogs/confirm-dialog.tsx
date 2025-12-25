@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useI18n } from "@/context/i18n";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function ConfirmDialog({
   title,
   description,
 }: ConfirmDialogProps) {
+  const { t } = useI18n();
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent>
@@ -34,8 +36,8 @@ export function ConfirmDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Bekor qilish</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Tasdiqlash</AlertDialogAction>
+          <AlertDialogCancel onClick={onClose}>{t('common.cancel')}</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>{t('common.confirm')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

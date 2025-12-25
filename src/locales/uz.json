@@ -1,10 +1,20 @@
+
 {
     "landing": {
         "title": "Smart School Manager",
         "headline": "Maktabingizni oson va samarali boshqaring",
         "subheadline": "Smart School Manager o'quvchilar, xodimlar, to'lovlar va barchasini bir joyda kuzatib borish uchun yagona platforma.",
         "cta": "Boshqaruv paneliga o'tish",
-        "rights": "Barcha huquqlar himoyalangan."
+        "rights": "Barcha huquqlar himoyalangan.",
+        "tagline": "Maktab boshqaruvining kelajagi",
+        "featuresTitle": "Yagona Platforma",
+        "featuresSubtitle": "Ta'lim muassasangizni boshqarish uchun to'liq yechim, o'quvchilarni ro'yxatga olishdan moliyaviy hisobotlargacha.",
+        "feature1Title": "O'quvchi va Xodimlar Boshqaruvi",
+        "feature1Desc": "Barcha o'quvchilar va xodimlarning ma'lumotlarini bir joyda saqlang va boshqaring.",
+        "feature2Title": "Moliyaviy Hisobot",
+        "feature2Desc": "To'lovlar, qoldiqlar, xarajatlarni osonlik bilan boshqaring va moliyaviy hisobotlarni yarating.",
+        "feature3Title": "Intuitiv Boshqaruv Paneli",
+        "feature3Desc": "Maktabingizning asosiy ko'rsatkichlarini bitta, ishlatish uchun qulay bo'lgan boshqaruv panelida ko'ring."
     },
     "sidebar": {
         "dashboard": "Bosh sahifa",
@@ -37,13 +47,22 @@
     "students": {
         "title": "O'quvchilar",
         "description": "O'quvchilaringizni va ularning to'lovlarini boshqaring.",
-        "addStudent": "O'quvchi qo'shish"
+        "addStudent": "O'quvchi qo'shish",
+        "archiveTitle": "O'quvchini arxivlash",
+        "archiveDescription": "Haqiqatan ham {name}ni arxivlamoqchimisiz?",
+        "unarchiveTitle": "O'quvchini arxivdan chiqarish",
+        "unarchiveDescription": "Haqiqatan ham {name}ni arxivdan chiqarmoqchimisiz?",
+        "deleteTitle": "O'quvchini o'chirish",
+        "deleteDescription": "Haqiqatan ham {name}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi."
     },
     "staff": {
         "title": "Xodimlar",
         "description": "Maktabingiz xodimlarini va ularning maoshlarini boshqaring.",
         "addAttendance": "Yo'qlama qo'shish",
-        "addStaff": "Xodim qo'shish"
+        "addStaff": "Xodim qo'shish",
+        "editDescription": "Xodim ma'lumotlarini yangilang.",
+        "deleteTitle": "Xodimni o'chirish",
+        "deleteDescription": "Haqiqatan ham {name}ni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi."
     },
     "grades": {
         "title": "Sinflar",

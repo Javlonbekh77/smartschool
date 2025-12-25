@@ -3,6 +3,8 @@ import * as React from 'react';
 import {
   ChevronsUpDown,
   ChevronDown,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import {
   ColumnDef,
@@ -23,6 +25,9 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {

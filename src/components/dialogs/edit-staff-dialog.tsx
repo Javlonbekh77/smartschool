@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Position, Staff, WorkDay } from "@/lib/types";
 import { useEffect } from "react";
 import { Checkbox } from "../ui/checkbox";
+import { useI18n } from "@/context/i18n";
 
 interface EditStaffDialogProps {
   isOpen: boolean;
@@ -44,6 +45,7 @@ type StaffFormData = z.infer<typeof staffSchema>;
 const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export function EditStaffDialog({ isOpen, onClose, onUpdateStaff, staff, positions }: EditStaffDialogProps) {
+  const { t } = useI18n();
   const {
     register,
     handleSubmit,
@@ -101,9 +103,9 @@ export function EditStaffDialog({ isOpen, onClose, onUpdateStaff, staff, positio
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Tahrirlash: {staff.fullName}</DialogTitle>
+          <DialogTitle>{t('common.edit')}: {staff.fullName}</DialogTitle>
           <DialogDescription>
-            Xodim ma'lumotlarini yangilang.
+            {t('staff.editDescription')}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -172,9 +174,9 @@ export function EditStaffDialog({ isOpen, onClose, onUpdateStaff, staff, positio
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {t('common.cancel')}
             </Button>
-            <Button type="submit">Saqlash</Button>
+            <Button type="submit">{t('common.save')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
