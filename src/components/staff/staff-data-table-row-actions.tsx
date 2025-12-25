@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Staff } from "@/lib/types"
 import Link from "next/link"
+import { useAuth } from "@/context/auth"
 
 interface StaffDataTableRowActionsProps {
   staff: Staff;
@@ -24,6 +25,8 @@ export function StaffDataTableRowActions({
   onEdit,
   onDelete
 }: StaffDataTableRowActionsProps) {
+  const { user } = useAuth();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,15 +40,19 @@ export function StaffDataTableRowActions({
         <DropdownMenuItem asChild>
           <Link href={`/staff/${staff.id}`}>View Profile</Link>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onEdit}>Edit Staff</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          className="text-destructive focus:bg-destructive/20"
-          onClick={onDelete}
-        >
-          Delete Staff
-        </DropdownMenuItem>
+        {user?.role === 'admin' && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onEdit}>Edit Staff</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="text-destructive focus:bg-destructive/20"
+              onClick={onDelete}
+            >
+              Delete Staff
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )

@@ -35,6 +35,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useI18n } from '@/context/i18n';
+import { useAuth } from '@/context/auth';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, labelKey: 'sidebar.dashboard' },
@@ -52,6 +53,7 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { t, language, setLanguage } = useI18n();
+  const { user, logout } = useAuth();
 
   const currentPageLabelKey =
     navItems.find((item) => pathname.startsWith(item.href))?.labelKey || 'Smart School Manager';
@@ -144,7 +146,7 @@ export function Header() {
             <DropdownMenuItem onClick={() => router.push('/settings')}>{t('header.settings')}</DropdownMenuItem>
             <DropdownMenuItem>{t('header.support')}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>{t('header.logout')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>{t('header.logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

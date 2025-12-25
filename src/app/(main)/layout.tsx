@@ -1,11 +1,33 @@
+'use client';
+
 import { Sidebar } from '@/components/sidebar';
 import { Header } from '@/components/header';
+import { useAuth } from '@/context/auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user === null) {
+      router.push('/login');
+    }
+  }, [user, router]);
+  
+  if (!user) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <div>Yuklanmoqda...</div>
+        </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Sidebar />

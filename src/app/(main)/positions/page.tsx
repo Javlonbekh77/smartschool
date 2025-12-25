@@ -27,8 +27,10 @@ import { EditPositionDialog } from '@/components/dialogs/edit-position-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { PositionDataTableRowActions } from '@/components/positions/position-data-table-row-actions';
 import useLocalStorage from '@/hooks/use-local-storage';
+import { useAuth } from '@/context/auth';
 
 export default function PositionsPage() {
+  const { user } = useAuth();
   const [positions, setPositions] = useLocalStorage<Position[]>('positions', initialPositions);
   const [dialogState, setDialogState] = useState({
     add: false,
@@ -43,6 +45,7 @@ export default function PositionsPage() {
   }, []);
 
   const openDialog = (dialog: keyof typeof dialogState, position?: Position) => {
+    if (user?.role !== 'admin') return;
     setSelectedPosition(position || null);
     setDialogState(prev => ({ ...prev, [dialog]: true }));
   };
@@ -58,6 +61,7 @@ export default function PositionsPage() {
         ...newPosition
     };
     setPositions(prev => [...prev, positionToAdd]);
+    closeDialog('add');
   };
   
   const handleUpdatePosition = (positionId: string, data: Omit<Position, 'id'>) => {
@@ -86,14 +90,16 @@ export default function PositionsPage() {
                 Manage job positions and their payment structures.
               </CardDescription>
             </div>
-            <div className="ml-auto">
-              <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Add Position
-                </span>
-              </Button>
-            </div>
+             {user?.role === 'admin' && (
+              <div className="ml-auto">
+                <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add Position
+                  </span>
+                </Button>
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -103,7 +109,7 @@ export default function PositionsPage() {
                 <TableHead>Position Name</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Rate / Salary</TableHead>
-                <TableHead><span className="sr-only">Actions</span></TableHead>
+                {user?.role === 'admin' && <TableHead><span className="sr-only">Actions</span></TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -120,13 +126,15 @@ export default function PositionsPage() {
                     {position.type === 'hourly' && ' so\'m / soat'}
                     {position.type === 'monthly' && ' so\'m / oy'}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <PositionDataTableRowActions 
-                        position={position}
-                        onEdit={() => openDialog('edit', position)}
-                        onDelete={() => openDialog('delete', position)}
-                    />
-                  </TableCell>
+                   {user?.role === 'admin' && (
+                    <TableCell className="text-right">
+                      <PositionDataTableRowActions 
+                          position={position}
+                          onEdit={() => openDialog('edit', position)}
+                          onDelete={() => openDialog('delete', position)}
+                      />
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
@@ -139,24 +147,28 @@ export default function PositionsPage() {
           </div>
         </CardFooter>
       </Card>
-      <AddPositionDialog
-        isOpen={dialogState.add}
-        onClose={() => closeDialog('add')}
-        onAddPosition={handleAddPosition}
-      />
-      <EditPositionDialog
-        isOpen={dialogState.edit}
-        onClose={() => closeDialog('edit')}
-        position={selectedPosition}
-        onUpdatePosition={handleUpdatePosition}
-      />
-      <ConfirmDialog
-        isOpen={dialogState.delete}
-        onClose={() => closeDialog('delete')}
-        onConfirm={handleDeletePosition}
-        title="Kasbni o'chirish"
-        description={`Haqiqatan ham ${selectedPosition?.name} kasbini o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
-      />
+      {user?.role === 'admin' && (
+        <>
+          <AddPositionDialog
+            isOpen={dialogState.add}
+            onClose={() => closeDialog('add')}
+            onAddPosition={handleAddPosition}
+          />
+          <EditPositionDialog
+            isOpen={dialogState.edit}
+            onClose={() => closeDialog('edit')}
+            position={selectedPosition}
+            onUpdatePosition={handleUpdatePosition}
+          />
+          <ConfirmDialog
+            isOpen={dialogState.delete}
+            onClose={() => closeDialog('delete')}
+            onConfirm={handleDeletePosition}
+            title="Kasbni o'chirish"
+            description={`Haqiqatan ham ${selectedPosition?.name} kasbini o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.`}
+          />
+        </>
+      )}
     </>
   );
 }

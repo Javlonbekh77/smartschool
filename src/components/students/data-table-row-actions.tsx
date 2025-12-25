@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Student } from "@/lib/types"
 import Link from "next/link"
+import { useAuth } from "@/context/auth"
 
 interface StudentDataTableRowActionsProps {
   student: Student;
@@ -28,6 +29,7 @@ export function StudentDataTableRowActions({
   onArchive,
   onDelete
 }: StudentDataTableRowActionsProps) {
+  const { user } = useAuth();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -41,21 +43,25 @@ export function StudentDataTableRowActions({
         <DropdownMenuItem asChild>
           <Link href={`/students/${student.id}`}>View Profile</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onMakePayment}>
-          Make Payment
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onEdit}>Edit Student</DropdownMenuItem>
-        <DropdownMenuItem onClick={onArchive}>
-          {student.isArchived ? 'Unarchive' : 'Archive'} Student
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          className="text-destructive focus:bg-destructive/20"
-          onClick={onDelete}
-        >
-          Delete Student
-        </DropdownMenuItem>
+        {user?.role === 'admin' && (
+          <>
+            <DropdownMenuItem onClick={onMakePayment}>
+              Make Payment
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onEdit}>Edit Student</DropdownMenuItem>
+            <DropdownMenuItem onClick={onArchive}>
+              {student.isArchived ? 'Unarchive' : 'Archive'} Student
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="text-destructive focus:bg-destructive/20"
+              onClick={onDelete}
+            >
+              Delete Student
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )

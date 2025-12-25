@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Position } from "@/lib/types"
+import { useAuth } from "@/context/auth"
 
 interface PositionDataTableRowActionsProps {
   position: Position;
@@ -23,6 +24,12 @@ export function PositionDataTableRowActions({
   onEdit,
   onDelete
 }: PositionDataTableRowActionsProps) {
+  const { user } = useAuth();
+
+  if (user?.role !== 'admin') {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

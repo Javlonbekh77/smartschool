@@ -4,9 +4,21 @@ import { School, ArrowRight, LayoutDashboard, DollarSign, Users } from 'lucide-r
 import Link from 'next/link';
 import { useI18n } from '@/context/i18n';
 import Image from 'next/image';
+import { useAuth } from '@/context/auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function RootPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
+
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -19,7 +31,7 @@ export default function RootPage() {
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
            <Button asChild size="lg" className="hidden sm:flex">
-              <Link href="/dashboard">
+              <Link href="/login">
                 {t('landing.cta')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -44,7 +56,7 @@ export default function RootPage() {
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button asChild size="lg">
-                    <Link href="/dashboard">
+                    <Link href="/login">
                       {t('landing.cta')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>

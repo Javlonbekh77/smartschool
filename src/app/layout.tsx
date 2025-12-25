@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster"
 import { I18nProvider } from '@/context/i18n';
+import { AuthProvider } from '@/context/auth';
 
 export const metadata: Metadata = {
   title: 'Smart School Manager',
@@ -27,9 +28,11 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
-        <I18nProvider>
-          {children}
-        </I18nProvider>
+        <AuthProvider>
+          <I18nProvider>
+            {children}
+          </I18nProvider>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>

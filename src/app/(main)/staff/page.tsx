@@ -30,9 +30,11 @@ import { StaffDataTableRowActions } from '@/components/staff/staff-data-table-ro
 import { AddAttendanceDialog } from '@/components/dialogs/add-attendance-dialog';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { useI18n } from '@/context/i18n';
+import { useAuth } from '@/context/auth';
 
 export default function StaffPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [staff, setStaff] = useLocalStorage<Staff[]>('staff', initialStaff);
   const [positions, setPositions] = useLocalStorage<Position[]>('positions', initialPositions);
   const [attendance, setAttendance] = useLocalStorage<Attendance[]>('attendance', initialAttendance);
@@ -51,6 +53,7 @@ export default function StaffPage() {
   }, []);
 
   const openDialog = (dialog: keyof typeof dialogState, staffMember?: Staff) => {
+    if (user?.role !== 'admin') return;
     setSelectedStaff(staffMember || null);
     setDialogState(prev => ({ ...prev, [dialog]: true }));
   };
@@ -158,20 +161,22 @@ export default function StaffPage() {
                 {t('staff.description')}
               </CardDescription>
             </div>
-            <div className="ml-auto flex items-center gap-2">
-              <Button size="sm" className="gap-1" onClick={() => openDialog('addAttendance')}>
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  {t('staff.addAttendance')}
-                </span>
-              </Button>
-              <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  {t('staff.addStaff')}
-                </span>
-              </Button>
-            </div>
+            {user?.role === 'admin' && (
+              <div className="ml-auto flex items-center gap-2">
+                <Button size="sm" className="gap-1" onClick={() => openDialog('addAttendance')}>
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t('staff.addAttendance')}
+                  </span>
+                </Button>
+                <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t('staff.addStaff')}
+                  </span>
+                </Button>
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -184,7 +189,7 @@ export default function StaffPage() {
                 <TableHead className="text-right">
                   Current Month Salary
                 </TableHead>
-                <TableHead><span className="sr-only">Actions</span></TableHead>
+                {user?.role === 'admin' && <TableHead><span className="sr-only">Actions</span></TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -221,13 +226,15 @@ export default function StaffPage() {
                   <TableCell className="text-right font-semibold">
                     {calculateSalary(member)?.toLocaleString()} so'm
                   </TableCell>
-                   <TableCell className="text-right">
-                      <StaffDataTableRowActions
-                        staff={member}
-                        onEdit={() => openDialog('edit', member)}
-                        onDelete={() => openDialog('delete', member)}
-                      />
-                   </TableCell>
+                   {user?.role === 'admin' && (
+                     <TableCell className="text-right">
+                        <StaffDataTableRowActions
+                          staff={member}
+                          onEdit={() => openDialog('edit', member)}
+                          onDelete={() => openDialog('delete', member)}
+                        />
+                     </TableCell>
+                   )}
                 </TableRow>
               ))}
             </TableBody>
@@ -240,32 +247,36 @@ export default function StaffPage() {
           </div>
         </CardFooter>
       </Card>
-      <AddStaffDialog 
-        isOpen={dialogState.add}
-        onClose={() => closeDialog('add')}
-        onAddStaff={handleAddStaff}
-        positions={positions}
-      />
-       <EditStaffDialog
-        isOpen={dialogState.edit}
-        onClose={() => closeDialog('edit')}
-        staff={selectedStaff}
-        onUpdateStaff={handleUpdateStaff}
-        positions={positions}
-      />
-      <ConfirmDialog
-        isOpen={dialogState.delete}
-        onClose={() => closeDialog('delete')}
-        onConfirm={handleDeleteStaff}
-        title={t('staff.deleteTitle')}
-        description={t('staff.deleteDescription', { name: selectedStaff?.fullName })}
-      />
-       <AddAttendanceDialog
-        isOpen={dialogState.addAttendance}
-        onClose={() => closeDialog('addAttendance')}
-        onAddAttendance={handleAddAttendance}
-        staff={staff}
-      />
+      {user?.role === 'admin' && (
+        <>
+          <AddStaffDialog 
+            isOpen={dialogState.add}
+            onClose={() => closeDialog('add')}
+            onAddStaff={handleAddStaff}
+            positions={positions}
+          />
+           <EditStaffDialog
+            isOpen={dialogState.edit}
+            onClose={() => closeDialog('edit')}
+            staff={selectedStaff}
+            onUpdateStaff={handleUpdateStaff}
+            positions={positions}
+          />
+          <ConfirmDialog
+            isOpen={dialogState.delete}
+            onClose={() => closeDialog('delete')}
+            onConfirm={handleDeleteStaff}
+            title={t('staff.deleteTitle')}
+            description={t('staff.deleteDescription', { name: selectedStaff?.fullName })}
+          />
+           <AddAttendanceDialog
+            isOpen={dialogState.addAttendance}
+            onClose={() => closeDialog('addAttendance')}
+            onAddAttendance={handleAddAttendance}
+            staff={staff}
+          />
+        </>
+      )}
     </>
   );
 }

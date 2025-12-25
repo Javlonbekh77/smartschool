@@ -18,9 +18,11 @@ import { EditStudentDialog } from '@/components/dialogs/edit-student-dialog';
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { useI18n } from '@/context/i18n';
+import { useAuth } from '@/context/auth';
 
 export default function StudentsPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [students, setStudents] = useLocalStorage<Student[]>('students', initialStudents);
   const [dialogState, setDialogState] = useState({
     add: false,
@@ -38,6 +40,7 @@ export default function StudentsPage() {
 
 
   const openDialog = (dialog: keyof typeof dialogState, student?: Student) => {
+    if (user?.role !== 'admin') return;
     setSelectedStudent(student || null);
     setDialogState(prev => ({ ...prev, [dialog]: true }));
   };
@@ -104,14 +107,16 @@ export default function StudentsPage() {
                 {t('students.description')}
               </CardDescription>
             </div>
-            <div className="ml-auto">
-              <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  {t('students.addStudent')}
-                </span>
-              </Button>
-            </div>
+            {user?.role === 'admin' && (
+              <div className="ml-auto">
+                <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t('students.addStudent')}
+                  </span>
+                </Button>
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -121,41 +126,46 @@ export default function StudentsPage() {
             onEdit={(student) => openDialog('edit', student)}
             onArchive={(student) => openDialog('archive', student)}
             onDelete={(student) => openDialog('delete', student)}
+            userRole={user?.role}
           />
         </CardContent>
       </Card>
       
-      <AddStudentDialog 
-        isOpen={dialogState.add}
-        onClose={() => closeDialog('add')}
-        onAddStudent={handleAddStudent}
-      />
-      <MakePaymentDialog
-        isOpen={dialogState.payment}
-        onClose={() => closeDialog('payment')}
-        student={selectedStudent}
-        onMakePayment={handleMakePayment}
-      />
-      <EditStudentDialog
-        isOpen={dialogState.edit}
-        onClose={() => closeDialog('edit')}
-        student={selectedStudent}
-        onUpdateStudent={handleUpdateStudent}
-      />
-      <ConfirmDialog
-        isOpen={dialogState.archive}
-        onClose={() => closeDialog('archive')}
-        onConfirm={handleToggleArchive}
-        title={t(selectedStudent?.isArchived ? 'students.unarchiveTitle' : 'students.archiveTitle')}
-        description={t(selectedStudent?.isArchived ? 'students.unarchiveDescription' : 'students.archiveDescription', { name: selectedStudent?.fullName })}
-      />
-      <ConfirmDialog
-        isOpen={dialogState.delete}
-        onClose={() => closeDialog('delete')}
-        onConfirm={handleDeleteStudent}
-        title={t('students.deleteTitle')}
-        description={t('students.deleteDescription', { name: selectedStudent?.fullName })}
-      />
+      {user?.role === 'admin' && (
+        <>
+          <AddStudentDialog 
+            isOpen={dialogState.add}
+            onClose={() => closeDialog('add')}
+            onAddStudent={handleAddStudent}
+          />
+          <MakePaymentDialog
+            isOpen={dialogState.payment}
+            onClose={() => closeDialog('payment')}
+            student={selectedStudent}
+            onMakePayment={handleMakePayment}
+          />
+          <EditStudentDialog
+            isOpen={dialogState.edit}
+            onClose={() => closeDialog('edit')}
+            student={selectedStudent}
+            onUpdateStudent={handleUpdateStudent}
+          />
+          <ConfirmDialog
+            isOpen={dialogState.archive}
+            onClose={() => closeDialog('archive')}
+            onConfirm={handleToggleArchive}
+            title={t(selectedStudent?.isArchived ? 'students.unarchiveTitle' : 'students.archiveTitle')}
+            description={t(selectedStudent?.isArchived ? 'students.unarchiveDescription' : 'students.archiveDescription', { name: selectedStudent?.fullName })}
+          />
+          <ConfirmDialog
+            isOpen={dialogState.delete}
+            onClose={() => closeDialog('delete')}
+            onConfirm={handleDeleteStudent}
+            title={t('students.deleteTitle')}
+            description={t('students.deleteDescription', { name: selectedStudent?.fullName })}
+          />
+        </>
+      )}
     </>
   );
 }

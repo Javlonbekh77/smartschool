@@ -50,9 +50,10 @@ interface StudentTableProps {
   onEdit: (student: Student) => void;
   onArchive: (student: Student) => void;
   onDelete: (student: Student) => void;
+  userRole?: 'admin' | 'visitor';
 }
 
-export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete }: StudentTableProps) {
+export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete, userRole }: StudentTableProps) {
   const columns: ColumnDef<Student>[] = [
     {
       accessorKey: 'fullName',
@@ -128,21 +129,25 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete 
         </Badge>
       ),
     },
-    {
-      id: 'actions',
-      enableHiding: false,
-      cell: ({ row }) => {
-        const student = row.original;
-        return <StudentDataTableRowActions 
-          student={student} 
-          onMakePayment={() => onMakePayment(student)}
-          onEdit={() => onEdit(student)}
-          onArchive={() => onArchive(student)}
-          onDelete={() => onDelete(student)}
-        />
-      },
-    },
   ];
+  
+  if (userRole === 'admin') {
+    columns.push({
+        id: 'actions',
+        enableHiding: false,
+        cell: ({ row }) => {
+          const student = row.original;
+          return <StudentDataTableRowActions 
+            student={student} 
+            onMakePayment={() => onMakePayment(student)}
+            onEdit={() => onEdit(student)}
+            onArchive={() => onArchive(student)}
+            onDelete={() => onDelete(student)}
+          />
+        },
+    });
+  }
+
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
