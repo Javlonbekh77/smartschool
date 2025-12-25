@@ -98,29 +98,32 @@ export default function StaffPage() {
     closeDialog('add');
   };
 
-  const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl'>>) => {
-     setStaff(prevStaff => {
+  const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl' | 'position'> & { positionId?: string }>) => {
+    const { positionId, ...restData } = data;
+    const position = positionId ? POSITIONS.find(p => p.id === positionId) : undefined;
+  
+    setStaff(prevStaff => {
       const staffIndex = prevStaff.findIndex(s => s.id === staffId);
       if (staffIndex === -1) return prevStaff;
-
+  
       const updatedStaffList = [...prevStaff];
-      const position = data.positionId ? POSITIONS.find(p => p.id === data.positionId) : updatedStaffList[staffIndex].position;
-      if (!position) return prevStaff;
-
+      const currentStaff = updatedStaffList[staffIndex];
+  
       updatedStaffList[staffIndex] = {
-        ...updatedStaffList[staffIndex],
-        ...data,
-        position,
+        ...currentStaff,
+        ...restData,
+        position: position || currentStaff.position, // Keep old position if new one not found/provided
       };
-
+  
       // Also update the master list
       const masterIndex = initialStaff.findIndex(s => s.id === staffId);
-      if(masterIndex !== -1) {
+      if (masterIndex !== -1) {
         initialStaff[masterIndex] = updatedStaffList[staffIndex];
       }
-
+  
       return updatedStaffList;
     });
+  
     closeDialog('edit');
   };
   
