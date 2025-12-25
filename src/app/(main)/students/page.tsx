@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -28,6 +28,12 @@ export default function StudentsPage() {
     delete: false,
   });
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
 
   const openDialog = (dialog: keyof typeof dialogState, student?: Student) => {
     setSelectedStudent(student || null);
@@ -79,6 +85,9 @@ export default function StudentsPage() {
     closeDialog('delete');
   };
 
+  if (!isMounted) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

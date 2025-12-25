@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -27,6 +27,15 @@ import useLocalStorage from '@/hooks/use-local-storage';
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpenses);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return <div>Loading...</div>;
+  }
 
   const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);

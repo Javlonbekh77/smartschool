@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -42,6 +42,11 @@ export default function StaffPage() {
     addAttendance: false,
   });
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const openDialog = (dialog: keyof typeof dialogState, staffMember?: Staff) => {
     setSelectedStaff(staffMember || null);
@@ -135,6 +140,10 @@ export default function StaffPage() {
     
     closeDialog('addAttendance');
   };
+
+  if (!isMounted) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

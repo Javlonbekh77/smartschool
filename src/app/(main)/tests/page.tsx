@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -27,6 +27,11 @@ export default function TestsPage() {
   const [tests, setTests] = useLocalStorage<Test[]>('tests', initialTests);
   const [testResults, setTestResults] = useLocalStorage<TestResult[]>('testResults', initialTestResults);
   const [students] = useLocalStorage<Student[]>('students', STUDENTS);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleAddTest = (newTest: Omit<Test, 'id'>, results: Omit<TestResult, 'id' | 'testId'>[]) => {
     const testToAdd: Test = {
@@ -46,6 +51,10 @@ export default function TestsPage() {
 
   const getResultsForTest = (testId: string) => {
     return testResults.filter(r => r.testId === testId).sort((a,b) => b.score - a.score);
+  }
+
+  if (!isMounted) {
+    return <div>Loading...</div>;
   }
 
   return (

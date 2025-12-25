@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -13,6 +14,15 @@ import type { Student } from '@/lib/types';
 
 export default function GradesPage() {
   const [students] = useLocalStorage<Student[]>('students', initialStudents);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return <div>Loading...</div>;
+  }
 
   const gradesData = students.reduce((acc, student) => {
     if (student.isArchived) return acc;

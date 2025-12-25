@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import {
   DollarSign,
   Users,
@@ -15,9 +16,18 @@ import useLocalStorage from '@/hooks/use-local-storage';
 import type { Student, Staff, Expense } from '@/lib/types';
 
 export default function DashboardPage() {
-  const [students] = useLocalStorage<Student[]>('students', initialStudents);
-  const [staff] = useLocalStorage<Staff[]>('staff', initialStaff);
-  const [expenses] = useLocalStorage<Expense[]>('expenses', initialExpenses);
+  const [students, setStudents] = useLocalStorage<Student[]>('students', initialStudents);
+  const [staff, setStaff] = useLocalStorage<Staff[]>('staff', initialStaff);
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpenses);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return <div>Loading...</div>;
+  }
 
   const totalStudents = students.filter(s => !s.isArchived).length;
   const totalStaff = staff.length;
