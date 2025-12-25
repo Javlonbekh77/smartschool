@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { STAFF as initialStaff, POSITIONS, ATTENDANCE as initialAttendance } from '@/lib/data';
-import type { Staff, Attendance, Position } from '@/lib/types';
+import type { Staff, Attendance, Position, WorkDay } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -60,12 +60,18 @@ export default function StaffPage() {
   }
 
   const calculateSalary = (member: Staff) => {
+    const today = new Date();
+    const currentMonth = today.getUTCMonth();
+    const currentYear = today.getUTCFullYear();
+    const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
+
     if (member.position.type === 'monthly') {
-      return member.position.rate;
+      // If they worked at least one day this month, pay full salary. Otherwise 0.
+      return memberAttendance.length > 0 ? member.position.rate : 0;
     }
     
     if (member.position.type === 'hourly') {
-      const totalHours = calculateTotalHours(member.id);
+      const totalHours = memberAttendance.reduce((sum, a) => sum + a.hours, 0);
       return totalHours * member.position.rate;
     }
 
@@ -87,31 +93,43 @@ export default function StaffPage() {
         avatarUrl: `https://picsum.photos/seed/${Date.now()}/400/400`,
         ...newStaffData
     };
-    setStaff(prev => [...prev, staffToAdd]);
+    initialStaff.push(staffToAdd); // Mutate initialStaff
+    setStaff([...initialStaff]);   // Trigger re-render
     closeDialog('add');
   };
 
   const handleUpdateStaff = (staffId: string, data: Partial<Omit<Staff, 'id' | 'avatarUrl'>>) => {
-    setStaff(prevStaff => {
-        const staffIndex = prevStaff.findIndex(s => s.id === staffId);
-        if (staffIndex === -1) return prevStaff;
+     setStaff(prevStaff => {
+      const staffIndex = prevStaff.findIndex(s => s.id === staffId);
+      if (staffIndex === -1) return prevStaff;
 
-        const updatedStaff = [...prevStaff];
-        const position = data.positionId ? POSITIONS.find(p => p.id === data.positionId) : updatedStaff[staffIndex].position;
-        if (!position) return prevStaff;
+      const updatedStaffList = [...prevStaff];
+      const position = data.positionId ? POSITIONS.find(p => p.id === data.positionId) : updatedStaffList[staffIndex].position;
+      if (!position) return prevStaff;
 
-        updatedStaff[staffIndex] = {
-            ...updatedStaff[staffIndex],
-            ...data,
-            position,
-        };
-        return updatedStaff;
+      updatedStaffList[staffIndex] = {
+        ...updatedStaffList[staffIndex],
+        ...data,
+        position,
+      };
+
+      // Also update the master list
+      const masterIndex = initialStaff.findIndex(s => s.id === staffId);
+      if(masterIndex !== -1) {
+        initialStaff[masterIndex] = updatedStaffList[staffIndex];
+      }
+
+      return updatedStaffList;
     });
     closeDialog('edit');
   };
   
   const handleDeleteStaff = () => {
     if (!selectedStaff) return;
+    const staffIndex = initialStaff.findIndex(s => s.id === selectedStaff.id);
+    if (staffIndex !== -1) {
+      initialStaff.splice(staffIndex, 1);
+    }
     setStaff(prev => prev.filter(s => s.id !== selectedStaff.id));
     closeDialog('delete');
   };
@@ -133,7 +151,10 @@ export default function StaffPage() {
         hours: r.hours,
       }));
 
-    setAttendance([...otherDatesAttendance, ...newAttendance]);
+    const updatedAttendance = [...otherDatesAttendance, ...newAttendance];
+    setAttendance(updatedAttendance);
+    // Also update master list
+    initialAttendance.splice(0, initialAttendance.length, ...updatedAttendance);
     closeDialog('addAttendance');
   };
 

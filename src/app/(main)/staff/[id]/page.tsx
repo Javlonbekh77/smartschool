@@ -54,7 +54,9 @@ export default function StaffProfilePage() {
   const calculateSalary = () => {
     if (!staffMember) return 0;
     if (staffMember.position.type === 'monthly') {
-      return staffMember.position.rate;
+      // Check if there is any attendance record for the current month.
+      const hasWorked = memberAttendanceThisMonth.length > 0;
+      return hasWorked ? staffMember.position.rate : 0;
     }
     if (staffMember.position.type === 'hourly') {
       const totalHours = memberAttendanceThisMonth.reduce((sum, h) => sum + h.hours, 0);

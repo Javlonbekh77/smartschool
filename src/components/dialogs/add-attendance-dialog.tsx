@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Staff } from "@/lib/types";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 interface AddAttendanceDialogProps {
   isOpen: boolean;
@@ -54,7 +54,6 @@ export function AddAttendanceDialog({
     handleSubmit,
     reset,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<AttendanceFormData>({
     resolver: zodResolver(attendanceSchema),
@@ -108,19 +107,16 @@ export function AddAttendanceDialog({
     }
   }, [isOpen, staff, replace, selectedDate]);
 
-  useEffect(() => {
-    if (isOpen) {
-        setValue('date', new Date().toISOString().split('T')[0]);
-    }
-  }, [isOpen, setValue])
-
   const onSubmit = (data: AttendanceFormData) => {
     onAddAttendance(data.records, data.date);
     handleClose();
   };
 
   const handleClose = () => {
-    reset();
+    reset({
+        date: new Date().toISOString().split("T")[0],
+        records: []
+    });
     onClose();
   };
 
