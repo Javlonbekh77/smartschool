@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, DollarSign, Clock, CalendarCheck } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Briefcase, DollarSign, Clock, CalendarCheck, CalendarDays } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import type { Staff, Attendance } from '@/lib/types';
-import { format } from 'date-fns';
+import { format, getDaysInMonth, startOfMonth, getDate } from 'date-fns';
 import {
     Table,
     TableBody,
@@ -41,23 +41,20 @@ export default function StaffProfilePage() {
     }
   }, [staffMember, router]);
 
-  if (!staffMember) {
-    return null;
-  }
-  
   const today = new Date();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
   
-  const memberAttendanceThisMonth = attendance.filter(a => 
-      a.staffId === staffMember.id &&
+  const memberAttendanceThisMonth = useMemo(() => attendance.filter(a => 
+      a.staffId === staffMember?.id &&
       new Date(a.date).getMonth() === currentMonth &&
       new Date(a.date).getFullYear() === currentYear
-  ).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  ), [attendance, staffMember?.id, currentMonth, currentYear]);
 
   const calculateSalary = () => {
+    if (!staffMember) return 0;
     if (staffMember.position.type === 'monthly') {
-      return memberAttendanceThisMonth.length > 0 ? staffMember.position.rate : 0;
+      return staffMember.position.rate;
     }
     if (staffMember.position.type === 'hourly') {
       const totalHours = memberAttendanceThisMonth.reduce((sum, h) => sum + h.hours, 0);
@@ -66,7 +63,16 @@ export default function StaffProfilePage() {
     return 0;
   }
 
-  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  
+  const daysInMonth = getDaysInMonth(today);
+  const monthStartDate = startOfMonth(today);
+  const monthDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const attendanceMap = new Map(memberAttendanceThisMonth.map(att => [getDate(new Date(att.date)), att.hours]));
+
+  if (!staffMember) {
+    return null;
+  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -115,42 +121,53 @@ export default function StaffProfilePage() {
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                        <Clock className="h-5 w-5" />
-                        Ishlagan soatlar ({format(today, 'MMMM yyyy')})
+                        <CalendarDays className="h-5 w-5" />
+                        Yo'qlama ({format(today, 'MMMM yyyy')})
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ScrollArea className="h-48">
-                        <Table>
+                   <ScrollArea className="w-full">
+                     <div className="overflow-x-auto">
+                        <Table className="min-w-full">
                             <TableHeader>
                                 <TableRow>
-                                <TableHead>Sana</TableHead>
-                                <TableHead className="text-right">Soat</TableHead>
+                                    {monthDays.map(day => {
+                                        const date = new Date(currentYear, currentMonth, day);
+                                        return (
+                                            <TableHead key={day} className="text-center p-2">
+                                                <div className="text-xs text-muted-foreground">{format(date, 'EEE')}</div>
+                                                <div>{day}</div>
+                                            </TableHead>
+                                        )
+                                    })}
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {memberAttendanceThisMonth.length > 0 ? (
-                                    memberAttendanceThisMonth.map(att => (
-                                        <TableRow key={att.id}>
-                                            <TableCell>{format(new Date(att.date), 'PPP')}</TableCell>
-                                            <TableCell className="text-right font-bold">{att.hours} soat</TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={2} className="text-center text-muted-foreground">
-                                            Bu oy uchun yo'qlama mavjud emas.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
+                               <TableRow>
+                                    {monthDays.map(day => {
+                                        const hours = attendanceMap.get(day);
+                                        return (
+                                            <TableCell key={day} className="text-center p-2">
+                                                {hours !== undefined ? (
+                                                    <Badge variant="default" className="bg-green-600 text-white w-8 h-8 flex items-center justify-center">
+                                                        {hours}
+                                                    </Badge>
+                                                ) : (
+                                                    <span className="text-muted-foreground">-</span>
+                                                )}
+                                            </TableCell>
+                                        )
+                                    })}
+                                </TableRow>
                             </TableBody>
                         </Table>
-                    </ScrollArea>
+                     </div>
+                   </ScrollArea>
                 </CardContent>
             </Card>
         )}
 
-        {staffMember.position.type === 'hourly' && staffMember.workSchedule && (
+        {staffMember.workSchedule && (
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
@@ -167,7 +184,7 @@ export default function StaffProfilePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                           {weekDays.map(day => {
+                           {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => {
                                 const schedule = staffMember.workSchedule?.find(ws => ws.day === day);
                                 return (
                                     <TableRow key={day} className={!schedule?.isWorkingDay ? 'text-muted-foreground' : ''}>

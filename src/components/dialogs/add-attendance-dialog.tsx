@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Staff } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface AddAttendanceDialogProps {
   isOpen: boolean;
@@ -74,14 +74,21 @@ export function AddAttendanceDialog({
   useEffect(() => {
     if (isOpen) {
       const dateObj = new Date(selectedDate || new Date());
-      // Adjust for timezone differences when getting day of the week
-      const dayIndex = (dateObj.getUTCDay() + 6) % 7; 
+      // Adjust for timezone differences to get correct day of week for local timezone
+      const localDate = new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate());
+      const dayIndex = (localDate.getDay() + 6) % 7; 
       const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
       const todayString = weekDays[dayIndex];
 
       const hourlyStaff = staff.filter(s => s.position.type === 'hourly');
       
-      const staffRecords = hourlyStaff.map(s => {
+      const staffForSelectedDay = hourlyStaff.filter(s => {
+          if (!s.workSchedule) return false;
+          const workDay = s.workSchedule.find(d => d.day === todayString);
+          return workDay && workDay.isWorkingDay;
+      });
+
+      const staffRecords = staffForSelectedDay.map(s => {
         let defaultHours = 0;
         if (s.workSchedule) {
             const workDay = s.workSchedule.find(d => d.day === todayString && d.isWorkingDay);
@@ -123,7 +130,7 @@ export function AddAttendanceDialog({
         <DialogHeader>
           <DialogTitle>Add Attendance Record (Hourly Staff)</DialogTitle>
           <DialogDescription>
-            Enter the hours worked for each hourly staff member. Defaults are based on their work schedule.
+            Enter the hours worked for each hourly staff member scheduled for the selected date.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -169,7 +176,7 @@ export function AddAttendanceDialog({
                     </div>
                  ) : (
                     <div className="flex h-full items-center justify-center text-muted-foreground">
-                        <p>No hourly staff found.</p>
+                        <p>No hourly staff scheduled to work on this date.</p>
                     </div>
                  )}
               </div>

@@ -60,14 +60,8 @@ export default function StaffPage() {
   }
 
   const calculateSalary = (member: Staff) => {
-    const today = new Date();
-    const currentMonth = today.getUTCMonth();
-    const currentYear = today.getUTCFullYear();
-    
-    const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
-
     if (member.position.type === 'monthly') {
-      return memberAttendance.length > 0 ? member.position.rate : 0;
+      return member.position.rate;
     }
     
     if (member.position.type === 'hourly') {
@@ -128,7 +122,7 @@ export default function StaffPage() {
   ) => {
     
     // Remove existing records for that date to avoid duplicates
-    const attendanceWithoutDate = attendance.filter(a => a.date !== date);
+    const otherDatesAttendance = attendance.filter(a => a.date !== date);
 
     const newAttendance: Attendance[] = records
       .filter(r => r.hours > 0)
@@ -139,7 +133,7 @@ export default function StaffPage() {
         hours: r.hours,
       }));
 
-    setAttendance([...attendanceWithoutDate, ...newAttendance]);
+    setAttendance([...otherDatesAttendance, ...newAttendance]);
     closeDialog('addAttendance');
   };
 
