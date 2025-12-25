@@ -25,8 +25,7 @@
         "tests": "Результаты тестов",
         "expenses": "Расходы",
         "reports": "Отчеты",
-        "settings": "Настройки",
-        "sunday": "Воскресенье"
+        "settings": "Настройки"
     },
     "header": {
         "language": "Язык",
