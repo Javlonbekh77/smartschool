@@ -54,15 +54,15 @@ export default function StaffPage() {
   const getAttendanceForMonth = (staffId: string, month: number, year: number) => {
     return attendance.filter(a => 
       a.staffId === staffId &&
-      new Date(a.date).getMonth() === month &&
-      new Date(a.date).getFullYear() === year
+      new Date(a.date).getUTCMonth() === month &&
+      new Date(a.date).getUTCFullYear() === year
     );
   }
 
   const calculateSalary = (member: Staff) => {
     const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+    const currentMonth = today.getUTCMonth();
+    const currentYear = today.getUTCFullYear();
     
     const memberAttendance = getAttendanceForMonth(member.id, currentMonth, currentYear);
 

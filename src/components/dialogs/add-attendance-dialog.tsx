@@ -69,19 +69,21 @@ export function AddAttendanceDialog({
     name: "records",
   });
   
-  // Populate the form with all staff members when the dialog opens
+  const selectedDate = watch('date');
+
   useEffect(() => {
     if (isOpen) {
-      const today = new Date(watch('date') || new Date()).getDay(); // Sunday - 0, Monday - 1, ...
-      const weekDayMap = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const todayString = weekDayMap[today];
+      const dateObj = new Date(selectedDate || new Date());
+      // Adjust for timezone differences when getting day of the week
+      const dayIndex = (dateObj.getUTCDay() + 6) % 7; 
+      const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const todayString = weekDays[dayIndex];
 
-
-      const staffRecords = staff.map(s => {
+      const hourlyStaff = staff.filter(s => s.position.type === 'hourly');
+      
+      const staffRecords = hourlyStaff.map(s => {
         let defaultHours = 0;
-        if (s.position.type === 'monthly') {
-            defaultHours = 8;
-        } else if (s.position.type === 'hourly' && s.workSchedule) {
+        if (s.workSchedule) {
             const workDay = s.workSchedule.find(d => d.day === todayString && d.isWorkingDay);
             if (workDay) {
                 defaultHours = workDay.hours;
@@ -97,7 +99,7 @@ export function AddAttendanceDialog({
       });
       replace(staffRecords);
     }
-  }, [isOpen, staff, replace, watch('date')]);
+  }, [isOpen, staff, replace, selectedDate]);
 
   useEffect(() => {
     if (isOpen) {
@@ -119,9 +121,9 @@ export function AddAttendanceDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Add Attendance Record</DialogTitle>
+          <DialogTitle>Add Attendance Record (Hourly Staff)</DialogTitle>
           <DialogDescription>
-            Enter the hours worked for each staff member for the selected date. Default hours are based on work schedule.
+            Enter the hours worked for each hourly staff member. Defaults are based on their work schedule.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -142,28 +144,34 @@ export function AddAttendanceDialog({
             <ScrollArea className="h-72 mt-4 border rounded-md">
               <div className="p-4">
                 <h4 className="mb-4 font-medium leading-none">Staff Hours</h4>
-                <div className="space-y-4">
-                  {fields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="grid grid-cols-3 items-center gap-4"
-                    >
-                      <Label className="col-span-2">{field.staffName} <span className="text-xs text-muted-foreground">({field.positionType})</span></Label>
-                      <Input
-                        type="number"
-                        step="0.5"
-                        {...register(`records.${index}.hours`)}
-                        placeholder="Hours"
-                        className="col-span-1"
-                      />
-                      {errors.records?.[index]?.hours && (
-                        <p className="col-span-3 text-red-500 text-sm text-right">
-                          {errors.records?.[index]?.hours?.message}
-                        </p>
-                      )}
+                 {fields.length > 0 ? (
+                    <div className="space-y-4">
+                      {fields.map((field, index) => (
+                        <div
+                          key={field.id}
+                          className="grid grid-cols-3 items-center gap-4"
+                        >
+                          <Label className="col-span-2">{field.staffName}</Label>
+                          <Input
+                            type="number"
+                            step="0.5"
+                            {...register(`records.${index}.hours`)}
+                            placeholder="Hours"
+                            className="col-span-1"
+                          />
+                          {errors.records?.[index]?.hours && (
+                            <p className="col-span-3 text-red-500 text-sm text-right">
+                              {errors.records?.[index]?.hours?.message}
+                            </p>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                 ) : (
+                    <div className="flex h-full items-center justify-center text-muted-foreground">
+                        <p>No hourly staff found.</p>
+                    </div>
+                 )}
               </div>
             </ScrollArea>
           </div>
