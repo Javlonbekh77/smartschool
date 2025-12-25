@@ -25,7 +25,8 @@
         "tests": "Результаты тестов",
         "expenses": "Расходы",
         "reports": "Отчеты",
-        "settings": "Настройки"
+        "settings": "Настройки",
+        "users": "Пользователи"
     },
     "header": {
         "language": "Язык",

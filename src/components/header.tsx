@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   Languages,
   Settings,
+  Users as UsersIcon,
 } from 'lucide-react';
 import {
   Sheet,
@@ -46,21 +47,31 @@ const navItems = [
   { href: '/tests', icon: ClipboardList, labelKey: 'sidebar.tests' },
   { href: '/expenses', icon: Wallet, labelKey: 'sidebar.expenses' },
   { href: '/reports', icon: FileText, labelKey: 'sidebar.reports' },
+];
+
+const adminNavItems = [
+    { href: '/users', icon: UsersIcon, labelKey: 'sidebar.users' },
+];
+
+const secondaryNavItems = [
   { href: '/settings', icon: Settings, labelKey: 'sidebar.settings' },
 ];
+
 
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { t, language, setLanguage } = useI18n();
   const { user, logout } = useAuth();
+  
+  const allNavItems = [...navItems, ...adminNavItems, ...secondaryNavItems];
 
   const currentPageLabelKey =
-    navItems.find((item) => pathname.startsWith(item.href))?.labelKey || 'Smart School Manager';
+    allNavItems.find((item) => pathname.startsWith(item.href))?.labelKey || 'Smart School Manager';
   
   const currentPage = t(currentPageLabelKey);
   
-  const isSubPage = navItems.some(item => pathname.startsWith(item.href) && pathname !== item.href);
+  const isSubPage = allNavItems.some(item => pathname.startsWith(item.href) && pathname !== item.href);
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -93,6 +104,35 @@ export function Header() {
                 {t(item.labelKey)}
               </Link>
             ))}
+             {user?.role === 'admin' && user.username === 'Admin' && adminNavItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground',
+                  pathname.startsWith(item.href) && 'text-foreground'
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {t(item.labelKey)}
+              </Link>
+            ))}
+             <div className="mt-auto">
+                <div className="border-t -mx-6 my-4"></div>
+                {secondaryNavItems.map((item) => (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                        'flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground',
+                        pathname.startsWith(item.href) && 'text-foreground'
+                        )}
+                    >
+                        <item.icon className="h-5 w-5" />
+                        {t(item.labelKey)}
+                    </Link>
+                ))}
+             </div>
           </nav>
         </SheetContent>
       </Sheet>

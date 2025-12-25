@@ -25,7 +25,8 @@
         "tests": "Test natijalari",
         "expenses": "Xarajatlar",
         "reports": "Hisobotlar",
-        "settings": "Sozlamalar"
+        "settings": "Sozlamalar",
+        "users": "Foydalanuvchilar"
     },
     "header": {
         "language": "Til",
