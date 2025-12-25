@@ -34,6 +34,7 @@ const navItems = [
   { href: '/tests', icon: ClipboardList, labelKey: 'sidebar.tests' },
   { href: '/expenses', icon: Wallet, labelKey: 'sidebar.expenses' },
   { href: '/reports', icon: FileText, labelKey: 'sidebar.reports' },
+  { href: '/sunday', icon: BarChart3, labelKey: 'sidebar.sunday' },
 ];
 
 const secondaryNavItems = [

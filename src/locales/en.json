@@ -25,7 +25,8 @@
         "tests": "Test Results",
         "expenses": "Expenses",
         "reports": "Reports",
-        "settings": "Settings"
+        "settings": "Settings",
+        "sunday": "Sunday"
     },
     "header": {
         "language": "Language",
