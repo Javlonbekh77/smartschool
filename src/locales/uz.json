@@ -8,7 +8,7 @@
         "rights": "Barcha huquqlar himoyalangan.",
         "tagline": "Ta'lim Boshqaruvining Kelajagi",
         "featuresTitle": "Yagona, Qudratli Platforma",
-        "featuresSubtitle": "O'quvchilarni qabul qilishdan moliyaviy tahlilgacha, bizning keng qamrovli yechimimiz ta'lim muassasangizning barcha ehtiyojlarini qondirish uchun ishlab chiqilgan.",
+        "featuresSubtitle": "O'quvchilarni qabul qilishdan moliyaviy tahlilgacha, bizning keng qamrovli yechimimiz ta'lim muassasangizning barcha ehtojlarini qondirish uchun ishlab chiqilgan.",
         "feature1Title": "O'quvchi va Xodimlar Hayot Sikli",
         "feature1Desc": "O'quvchilar va xodimlarning to'liq ma'lumotlarini, qabul qilishdan tortib arxivlashgacha, barchasini bir markazlashtirilgan joyda boshqaring.",
         "feature2Title": "Osonlashtirilgan Moliya",
@@ -26,7 +26,8 @@
         "expenses": "Xarajatlar",
         "reports": "Hisobotlar",
         "settings": "Sozlamalar",
-        "users": "Foydalanuvchilar"
+        "users": "Foydalanuvchilar",
+        "lastActions": "So'nggi Amallar"
     },
     "header": {
         "language": "Til",

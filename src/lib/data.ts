@@ -1,4 +1,4 @@
-import { Student, Staff, Position, Expense, Test, TestResult, Attendance } from './types';
+import { Student, Staff, Position, Expense, Test, TestResult, Attendance, Payment, AuditLog } from './types';
 
 export const POSITIONS: Position[] = [
   { id: 'pos1', name: 'Math Teacher', type: 'monthly', rate: 3000000 },
@@ -143,4 +143,12 @@ export const ATTENDANCE: Attendance[] = [
     { id: 'att10', staffId: 'staff2', date: '2024-06-07', hours: 4 },
     { id: 'att11', staffId: 'staff2', date: '2024-06-10', hours: 5 },
     { id: 'att12', staffId: 'staff2', date: '2024-06-11', hours: 3 },
+];
+
+export const PAYMENTS: Payment[] = [
+    {id: 'pay1', studentId: 'stu2', amount: 350000, date: '2024-05-15', balanceAfter: 50000, note: 'May Fee'},
+];
+
+export const AUDIT_LOGS: AuditLog[] = [
+    {id: 'log1', adminUsername: 'Admin', action: 'add_student', details: 'Added student: Alice Johnson', timestamp: '2024-05-28T10:00:00Z'}
 ];

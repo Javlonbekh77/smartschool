@@ -83,3 +83,11 @@ export interface UserCredentials extends User {
     id: string;
     password: string;
 }
+
+export type AuditLog = {
+    id: string;
+    adminUsername: string;
+    action: 'add_student' | 'edit_student' | 'delete_student' | 'archive_student' | 'unarchive_student' | 'make_payment' | 'import_students' | 'add_staff' | 'edit_staff' | 'delete_staff' | 'add_attendance' | 'add_position' | 'edit_position' | 'delete_position' | 'add_expense' | 'add_test';
+    details: string;
+    timestamp: string; // ISO 8601 format
+};

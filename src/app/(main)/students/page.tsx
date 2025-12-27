@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/card';
 import { PlusCircle, Upload, Download } from 'lucide-react';
 import { StudentTable } from '@/components/students/student-table';
-import { STUDENTS as initialStudents } from '@/lib/data';
-import type { Student } from '@/lib/types';
+import { STUDENTS as initialStudents, PAYMENTS as initialPayments, AUDIT_LOGS as initialAuditLogs } from '@/lib/data';
+import type { Student, Payment, AuditLog } from '@/lib/types';
 import { AddStudentDialog } from '@/components/dialogs/add-student-dialog';
 import { MakePaymentDialog } from '@/components/dialogs/make-payment-dialog';
 import { EditStudentDialog } from '@/components/dialogs/edit-student-dialog';
@@ -24,6 +24,9 @@ export default function StudentsPage() {
   const { t } = useI18n();
   const { user } = useAuth();
   const [students, setStudents] = useLocalStorage<Student[]>('students', initialStudents);
+  const [payments, setPayments] = useLocalStorage<Payment[]>('payments', initialPayments);
+  const [auditLogs, setAuditLogs] = useLocalStorage<AuditLog[]>('audit_logs', initialAuditLogs);
+
   const [dialogState, setDialogState] = useState({
     add: false,
     payment: false,
@@ -39,6 +42,17 @@ export default function StudentsPage() {
     setIsMounted(true);
   }, []);
 
+  const logAction = (action: AuditLog['action'], details: string) => {
+    if (!user) return;
+    const newLog: AuditLog = {
+      id: `log-${Date.now()}`,
+      adminUsername: user.username,
+      action,
+      details,
+      timestamp: new Date().toISOString(),
+    };
+    setAuditLogs(prev => [...prev, newLog]);
+  };
 
   const openDialog = (dialog: keyof typeof dialogState, student?: Student) => {
     if (user?.role !== 'admin') return;
@@ -58,18 +72,46 @@ export default function StudentsPage() {
       ...newStudent
     };
     setStudents(prev => [...prev, studentToAdd]);
+    logAction('add_student', `Added student: ${studentToAdd.fullName}`);
     closeDialog('add');
   };
 
-  const handleMakePayment = (studentId: string, amount: number) => {
-    setStudents(prev => prev.map(s => 
-      s.id === studentId ? { ...s, balance: s.balance + amount } : s
-    ));
+  const handleMakePayment = (studentId: string, amount: number, note: string) => {
+    let studentName = '';
+    let newBalance = 0;
+    setStudents(prev => prev.map(s => {
+      if (s.id === studentId) {
+        studentName = s.fullName;
+        newBalance = s.balance + amount;
+        return { ...s, balance: newBalance };
+      }
+      return s;
+    }));
+
+    const newPayment: Payment = {
+        id: `pay-${Date.now()}`,
+        studentId: studentId,
+        amount: amount,
+        note: note,
+        date: new Date().toISOString(),
+        balanceAfter: newBalance
+    };
+    setPayments(prev => [...prev, newPayment]);
+
+    logAction('make_payment', `Made payment of ${amount.toLocaleString()} so'm for ${studentName}. Note: ${note}`);
     closeDialog('payment');
   };
   
   const handleUpdateStudent = (studentId: string, data: Omit<Student, 'id' | 'balance' | 'isArchived'>) => {
-    setStudents(prev => prev.map(s => s.id === studentId ? { ...s, ...data } : s));
+    let studentName = '';
+    setStudents(prev => prev.map(s => {
+        if(s.id === studentId) {
+            studentName = s.fullName;
+            return { ...s, ...data };
+        }
+        return s;
+    }));
+    logAction('edit_student', `Edited details for student: ${studentName}`);
     closeDialog('edit');
   };
 
@@ -78,12 +120,16 @@ export default function StudentsPage() {
     setStudents(prev => prev.map(s => 
         s.id === selectedStudent.id ? { ...s, isArchived: !s.isArchived } : s
     ));
+    const action = selectedStudent.isArchived ? 'unarchive_student' : 'archive_student';
+    logAction(action, `${action === 'archive_student' ? 'Archived' : 'Unarchived'} student: ${selectedStudent.fullName}`);
     closeDialog('archive');
   };
 
   const handleDeleteStudent = () => {
     if (!selectedStudent) return;
     setStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
+    setPayments(prev => prev.filter(p => p.studentId !== selectedStudent.id)); // Also remove payments
+    logAction('delete_student', `Deleted student: ${selectedStudent.fullName}`);
     closeDialog('delete');
   };
 
@@ -112,6 +158,7 @@ export default function StudentsPage() {
       if (typeof e.target?.result === 'string') {
         const importedStudents: Student[] = JSON.parse(e.target.result);
         setStudents(importedStudents);
+        logAction('import_students', `Imported ${importedStudents.length} students from file.`);
       }
     };
      // Reset file input

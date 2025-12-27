@@ -26,7 +26,8 @@
         "expenses": "Расходы",
         "reports": "Отчеты",
         "settings": "Настройки",
-        "users": "Пользователи"
+        "users": "Пользователи",
+        "lastActions": "Последние действия"
     },
     "header": {
         "language": "Язык",

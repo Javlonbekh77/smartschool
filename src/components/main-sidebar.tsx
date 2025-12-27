@@ -14,6 +14,7 @@ import {
   BarChart3,
   Settings,
   Users as UsersIcon,
+  History,
 } from 'lucide-react';
 import {
   Tooltip,
@@ -40,6 +41,7 @@ const navItems = [
   { href: '/tests', icon: ClipboardList, labelKey: 'sidebar.tests' },
   { href: '/expenses', icon: Wallet, labelKey: 'sidebar.expenses' },
   { href: '/reports', icon: FileText, labelKey: 'sidebar.reports' },
+  { href: '/last-actions', icon: History, labelKey: 'sidebar.lastActions' },
 ];
 
 const adminNavItems = [

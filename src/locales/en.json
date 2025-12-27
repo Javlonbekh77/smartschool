@@ -26,7 +26,8 @@
         "expenses": "Expenses",
         "reports": "Reports",
         "settings": "Settings",
-        "users": "Users"
+        "users": "Users",
+        "lastActions": "Last Actions"
     },
     "header": {
         "language": "Language",
