@@ -64,12 +64,12 @@ export default function RootPage() {
             </div>
             <div className="mt-12 mx-auto max-w-5xl">
                 <Image
-                    src="https://storage.googleapis.com/genkit-assets/images/bAsz2wN.jpeg"
-                    alt="University Building"
+                    src="https://picsum.photos/seed/123/1200/600"
+                    alt="Modern Library"
                     width={1200}
                     height={600}
                     className="rounded-xl object-cover shadow-2xl"
-                    data-ai-hint="university building architecture"
+                    data-ai-hint="modern library"
                 />
             </div>
           </div>
