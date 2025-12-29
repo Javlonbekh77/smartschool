@@ -64,7 +64,7 @@ export default function RootPage() {
             </div>
             <div className="mt-12 mx-auto max-w-5xl">
                 <Image
-                    src="https://picsum.photos/seed/education/1200/600"
+                    src="https://storage.googleapis.com/genkit-assets/images/bAsz2wN.jpeg"
                     alt="University Building"
                     width={1200}
                     height={600}
