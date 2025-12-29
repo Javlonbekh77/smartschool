@@ -41,16 +41,16 @@ export default function RootPage() {
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_550px] lg:gap-12 xl:grid-cols-[1fr_650px]">
-              <div className="flex flex-col justify-center space-y-4">
+            <div className="grid gap-12 lg:grid-cols-1">
+              <div className="flex flex-col items-center justify-center space-y-6 text-center">
                 <div className="space-y-4">
                    <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm text-secondary-foreground">
                     {t('landing.tagline')}
                   </div>
-                  <h1 className="text-4xl font-bold font-headline tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  <h1 className="text-5xl font-bold font-headline tracking-tighter sm:text-6xl xl:text-7xl/none">
                     {t('landing.headline')}
                   </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  <p className="max-w-[700px] text-muted-foreground md:text-xl">
                     {t('landing.subheadline')}
                   </p>
                 </div>
@@ -64,12 +64,12 @@ export default function RootPage() {
                 </div>
               </div>
                <Image
-                src="https://picsum.photos/seed/science-class/650/550"
-                width="650"
-                height="550"
+                src="https://picsum.photos/seed/classroom/1200/500"
+                width="1200"
+                height="500"
                 alt="Hero"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-                data-ai-hint="science classroom"
+                className="mx-auto aspect-[16/7] overflow-hidden rounded-xl object-cover"
+                data-ai-hint="classroom students"
               />
             </div>
           </div>
