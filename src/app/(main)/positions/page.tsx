@@ -19,8 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { POSITIONS as initialPositions } from '@/lib/data';
-import type { Position } from '@/lib/types';
+import { POSITIONS as initialPositions, AUDIT_LOGS as initialAuditLogs } from '@/lib/data';
+import type { Position, AuditLog } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { AddPositionDialog } from '@/components/dialogs/add-position-dialog';
 import { EditPositionDialog } from '@/components/dialogs/edit-position-dialog';
@@ -32,6 +32,8 @@ import { useAuth } from '@/context/auth';
 export default function PositionsPage() {
   const { user } = useAuth();
   const [positions, setPositions] = useLocalStorage<Position[]>('positions', initialPositions);
+  const [auditLogs, setAuditLogs] = useLocalStorage<AuditLog[]>('audit_logs', initialAuditLogs);
+
   const [dialogState, setDialogState] = useState({
     add: false,
     edit: false,
@@ -44,6 +46,18 @@ export default function PositionsPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const logAction = (action: AuditLog['action'], details: string) => {
+    if (!user) return;
+    const newLog: AuditLog = {
+      id: `log-${Date.now()}`,
+      adminUsername: user.username,
+      action,
+      details,
+      timestamp: new Date().toISOString(),
+    };
+    setAuditLogs(prev => [...prev, newLog]);
+  };
 
   const openDialog = (dialog: keyof typeof dialogState, position?: Position) => {
     if (user?.role !== 'admin') return;
@@ -62,17 +76,20 @@ export default function PositionsPage() {
         ...newPosition
     };
     setPositions(prev => [...prev, positionToAdd]);
+    logAction('add_position', `Added position: ${newPosition.name}`);
     closeDialog('add');
   };
   
   const handleUpdatePosition = (positionId: string, data: Omit<Position, 'id'>) => {
     setPositions(prev => prev.map(p => p.id === positionId ? { ...p, ...data } : p));
+    logAction('edit_position', `Edited position: ${data.name}`);
     closeDialog('edit');
   };
 
   const handleDeletePosition = () => {
     if (!selectedPosition) return;
     setPositions(prev => prev.filter(p => p.id !== selectedPosition.id));
+    logAction('delete_position', `Deleted position: ${selectedPosition.name}`);
     closeDialog('delete');
   };
 

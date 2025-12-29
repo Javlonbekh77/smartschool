@@ -18,8 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { STAFF as initialStaff, POSITIONS as initialPositions, ATTENDANCE as initialAttendance } from '@/lib/data';
-import type { Staff, Attendance, Position, WorkDay } from '@/lib/types';
+import { STAFF as initialStaff, POSITIONS as initialPositions, ATTENDANCE as initialAttendance, AUDIT_LOGS as initialAuditLogs } from '@/lib/data';
+import type { Staff, Attendance, Position, WorkDay, AuditLog } from '@/lib/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -38,6 +38,8 @@ export default function StaffPage() {
   const [staff, setStaff] = useLocalStorage<Staff[]>('staff', initialStaff);
   const [positions, setPositions] = useLocalStorage<Position[]>('positions', initialPositions);
   const [attendance, setAttendance] = useLocalStorage<Attendance[]>('attendance', initialAttendance);
+  const [auditLogs, setAuditLogs] = useLocalStorage<AuditLog[]>('audit_logs', initialAuditLogs);
+
 
   const [dialogState, setDialogState] = useState({
     add: false,
@@ -52,6 +54,18 @@ export default function StaffPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  
+  const logAction = (action: AuditLog['action'], details: string) => {
+    if (!user) return;
+    const newLog: AuditLog = {
+      id: `log-${Date.now()}`,
+      adminUsername: user.username,
+      action,
+      details,
+      timestamp: new Date().toISOString(),
+    };
+    setAuditLogs(prev => [...prev, newLog]);
+  };
 
   const openDialog = (dialog: keyof typeof dialogState, staffMember?: Staff) => {
     if (user?.role !== 'admin') return;
@@ -105,6 +119,7 @@ export default function StaffPage() {
         ...newStaffData
     };
     setStaff(prev => [...prev, staffToAdd]);
+    logAction('add_staff', `Added staff member: ${staffToAdd.fullName}`);
     closeDialog('add');
   };
 
@@ -112,6 +127,10 @@ export default function StaffPage() {
     setStaff(prevStaff => 
         prevStaff.map(s => (s.id === staffId ? { ...s, ...data } : s))
     );
+    const staffMember = staff.find(s => s.id === staffId);
+    if(staffMember) {
+        logAction('edit_staff', `Edited details for staff member: ${staffMember.fullName}`);
+    }
     closeDialog('edit');
   };
   
@@ -120,6 +139,7 @@ export default function StaffPage() {
     setStaff(prev => prev.filter(s => s.id !== selectedStaff.id));
     // Also remove their attendance records
     setAttendance(prev => prev.filter(a => a.staffId !== selectedStaff.id));
+    logAction('delete_staff', `Deleted staff member: ${selectedStaff.fullName}`);
     closeDialog('delete');
   };
 
@@ -141,7 +161,7 @@ export default function StaffPage() {
 
         return [...otherDatesAttendance, ...newAttendance];
     });
-    
+    logAction('add_attendance', `Added attendance for ${records.length} staff members on ${date}.`);
     closeDialog('addAttendance');
   };
 

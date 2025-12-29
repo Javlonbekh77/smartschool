@@ -19,8 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { EXPENSES as initialExpenses } from '@/lib/data';
-import type { Expense } from '@/lib/types';
+import { EXPENSES as initialExpenses, AUDIT_LOGS as initialAuditLogs } from '@/lib/data';
+import type { Expense, AuditLog } from '@/lib/types';
 import { AddExpenseDialog } from '@/components/dialogs/add-expense-dialog';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { useAuth } from '@/context/auth';
@@ -28,6 +28,7 @@ import { useAuth } from '@/context/auth';
 export default function ExpensesPage() {
   const { user } = useAuth();
   const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpenses);
+  const [auditLogs, setAuditLogs] = useLocalStorage<AuditLog[]>('audit_logs', initialAuditLogs);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,6 +36,19 @@ export default function ExpensesPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const logAction = (action: AuditLog['action'], details: string) => {
+    if (!user) return;
+    const newLog: AuditLog = {
+      id: `log-${Date.now()}`,
+      adminUsername: user.username,
+      action,
+      details,
+      timestamp: new Date().toISOString(),
+    };
+    setAuditLogs(prev => [...prev, newLog]);
+  };
+
 
   if (!isMounted) {
     return <div>Loading...</div>;
@@ -49,6 +63,7 @@ export default function ExpensesPage() {
       ...newExpense,
     };
     setExpenses(prev => [...prev, expenseToAdd]);
+    logAction('add_expense', `Added expense: ${newExpense.description} for ${newExpense.amount.toLocaleString()} so'm`);
   };
 
   const handleExport = () => {

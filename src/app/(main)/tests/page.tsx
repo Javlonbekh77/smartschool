@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/card';
 import { PlusCircle } from 'lucide-react';
 import { AddTestResultDialog } from '@/components/dialogs/add-test-result-dialog';
-import { STUDENTS, TESTS as initialTests, TEST_RESULTS as initialTestResults } from '@/lib/data';
-import type { Student, Test, TestResult } from '@/lib/types';
+import { STUDENTS, TESTS as initialTests, TEST_RESULTS as initialTestResults, AUDIT_LOGS as initialAuditLogs } from '@/lib/data';
+import type { Student, Test, TestResult, AuditLog } from '@/lib/types';
 import {
   Table,
   TableBody,
@@ -21,17 +21,32 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useLocalStorage from '@/hooks/use-local-storage';
+import { useAuth } from '@/context/auth';
 
 export default function TestsPage() {
+  const { user } = useAuth();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [tests, setTests] = useLocalStorage<Test[]>('tests', initialTests);
   const [testResults, setTestResults] = useLocalStorage<TestResult[]>('testResults', initialTestResults);
   const [students] = useLocalStorage<Student[]>('students', STUDENTS);
+  const [auditLogs, setAuditLogs] = useLocalStorage<AuditLog[]>('audit_logs', initialAuditLogs);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const logAction = (action: AuditLog['action'], details: string) => {
+    if (!user) return;
+    const newLog: AuditLog = {
+      id: `log-${Date.now()}`,
+      adminUsername: user.username,
+      action,
+      details,
+      timestamp: new Date().toISOString(),
+    };
+    setAuditLogs(prev => [...prev, newLog]);
+  };
 
   const handleAddTest = (newTest: Omit<Test, 'id'>, results: Omit<TestResult, 'id' | 'testId'>[]) => {
     const testToAdd: Test = {
@@ -46,6 +61,7 @@ export default function TestsPage() {
       testId: testToAdd.id,
     }));
     setTestResults(prev => [...prev, ...resultsToAdd]);
+    logAction('add_test', `Added test results for ${newTest.grade}-grade for ${newTest.month}.`);
 
   };
 
