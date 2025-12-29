@@ -64,12 +64,12 @@ export default function RootPage() {
                 </div>
               </div>
                <Image
-                src="https://picsum.photos/seed/classroom/1200/500"
+                src="https://picsum.photos/seed/university/1200/500"
                 width="1200"
                 height="500"
                 alt="Hero"
                 className="mx-auto aspect-[16/7] overflow-hidden rounded-xl object-cover"
-                data-ai-hint="classroom students"
+                data-ai-hint="university building"
               />
             </div>
           </div>
