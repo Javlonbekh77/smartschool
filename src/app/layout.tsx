@@ -7,7 +7,7 @@ import { I18nProvider } from '@/context/i18n';
 import { AuthProvider } from '@/context/auth';
 
 export const metadata: Metadata = {
-  title: 'Smart School Manager',
+  title: 'Maktab AI',
   description: 'A comprehensive school management platform.',
 };
 

@@ -69,7 +69,7 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const allNavItems = [...navItems, ...adminNavItems, ...secondaryNavItems];
 
   const currentPageLabelKey =
-    allNavItems.find((item) => pathname.startsWith(item.href))?.labelKey || 'Smart School Manager';
+    allNavItems.find((item) => pathname.startsWith(item.href))?.labelKey || 'landing.title';
   
   const currentPage = t(currentPageLabelKey);
   
@@ -91,7 +91,7 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <School className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">Smart School</span>
+              <span className="sr-only">{t('landing.title')}</span>
             </Link>
             {navItems.map((item) => (
               <Link

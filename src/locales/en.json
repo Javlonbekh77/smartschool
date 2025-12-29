@@ -1,20 +1,30 @@
 
 {
     "landing": {
-        "title": "Smart School Manager",
-        "headline": "Streamline Your School's Operations",
-        "subheadline": "An all-in-one platform to manage students, staff, and finances with unparalleled efficiency. Focus on education, we'll handle the rest.",
+        "title": "Maktab AI",
+        "headline": "Manage Your School with Artificial Intelligence",
+        "subheadline": "An all-in-one platform to manage students, staff, and finances with AI-powered efficiency. Focus on education, we'll handle the rest.",
         "cta": "Go to Dashboard",
         "rights": "All rights reserved.",
         "tagline": "The Future of Educational Management",
-        "featuresTitle": "A Unified, Powerful Platform",
-        "featuresSubtitle": "From student enrollment to financial analytics, our comprehensive solution is designed to meet all the needs of your educational institution.",
+        "featuresTitle": "Why Maktab AI?",
+        "featuresSubtitle": "Our platform offers a comprehensive solution to streamline all aspects of your educational institution's management.",
         "feature1Title": "Student & Staff Lifecycle",
         "feature1Desc": "Manage complete records for students and staff, from admission and hiring to archiving, all in one centralized location.",
         "feature2Title": "Effortless Financials",
         "feature2Desc": "Easily track fees, balances, expenses, and generate insightful financial reports to keep your institution on a solid footing.",
-        "feature3Title": "At-a-Glance Dashboard",
-        "feature3Desc": "Gain a comprehensive, bird's-eye view of your school's most important metrics on a single, intuitive dashboard."
+        "feature3Title": "AI-Powered Analytics",
+        "feature3Desc": "Gain a comprehensive, bird's-eye view of your school's most important metrics and generate reports with a single click.",
+        "aiCardTitle": "AI Assistant on Guard",
+        "aiCardDesc": "Get instant summaries and financial reports on debtors and school performance, saving you hours of manual work.",
+        "howItWorksTitle": "How It Works",
+        "howItWorksSubtitle": "Get started in three simple steps and transform your school management overnight.",
+        "step1Title": "Sign Up",
+        "step1Desc": "Create your account and set up your school profile in minutes.",
+        "step2Title": "Input Data",
+        "step2Desc": "Easily import or manually add student, staff, and financial information.",
+        "step3Title": "Manage & Analyze",
+        "step3Desc": "Use the intuitive dashboard and AI tools to manage operations and gain insights."
     },
     "sidebar": {
         "dashboard": "Dashboard",
