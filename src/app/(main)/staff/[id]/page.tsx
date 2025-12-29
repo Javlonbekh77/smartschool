@@ -86,131 +86,131 @@ export default function StaffProfilePage() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-    <Card>
-      <CardHeader className="items-center text-center">
-        <Avatar className="w-24 h-24 mb-4">
-          <AvatarFallback>{staffMember.fullName.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <CardTitle className="font-headline text-3xl">{staffMember.fullName}</CardTitle>
-        <CardDescription>{staffMember.position.name}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Briefcase className="h-6 w-6 text-muted-foreground" />
-            <div>
-              <p className="text-sm text-muted-foreground">Kasbi</p>
-              <p className="font-semibold">{staffMember.position.name}</p>
+    <div className="grid gap-6 lg:grid-cols-3">
+      <Card className="lg:col-span-3 xl:col-span-1">
+        <CardHeader className="items-center text-center">
+          <Avatar className="w-24 h-24 mb-4">
+            <AvatarFallback>{staffMember.fullName.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <CardTitle className="font-headline text-3xl">{staffMember.fullName}</CardTitle>
+          <CardDescription>{staffMember.position.name}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="flex items-center gap-4">
+              <Briefcase className="h-6 w-6 text-muted-foreground" />
+              <div>
+                <p className="text-sm text-muted-foreground">Kasbi</p>
+                <p className="font-semibold">{staffMember.position.name}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Badge variant="outline" className="capitalize text-sm">{staffMember.position.type}</Badge>
+              <div>
+                <p className="text-sm text-muted-foreground">To'lov turi</p>
+                <p className="font-semibold">
+                  {staffMember.position.rate.toLocaleString()}
+                  {staffMember.position.type === 'hourly' && ' so\'m / soat'}
+                  {staffMember.position.type === 'monthly' && ' so\'m / oy'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 md:col-span-2">
+              <DollarSign className="h-6 w-6 text-muted-foreground" />
+              <div>
+                <p className="text-sm text-muted-foreground">Hisoblangan oylik ({format(today, 'MMMM')})</p>
+                <p className="font-semibold">{calculateSalary()?.toLocaleString()} so'm</p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <Badge variant="outline" className="capitalize text-sm">{staffMember.position.type}</Badge>
-            <div>
-              <p className="text-sm text-muted-foreground">To'lov turi</p>
-              <p className="font-semibold">
-                {staffMember.position.rate.toLocaleString()}
-                {staffMember.position.type === 'hourly' && ' so\'m / soat'}
-                {staffMember.position.type === 'monthly' && ' so\'m / oy'}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 md:col-span-2">
-            <DollarSign className="h-6 w-6 text-muted-foreground" />
-            <div>
-              <p className="text-sm text-muted-foreground">Hisoblangan oylik ({format(today, 'MMMM')})</p>
-              <p className="font-semibold">{calculateSalary()?.toLocaleString()} so'm</p>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
 
-    <div className="space-y-6">
-        {staffMember.position.type === 'hourly' && (
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                        <CalendarDays className="h-5 w-5" />
-                        Yo'qlama ({format(today, 'MMMM yyyy')})
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                   <ScrollArea className="w-full">
-                     <div className="overflow-x-auto">
-                        <Table className="min-w-full w-max">
-                            <TableHeader>
+      <div className="space-y-6 lg:col-span-3 xl:col-span-2">
+          {staffMember.position.type === 'hourly' && (
+              <Card>
+                  <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                          <CalendarDays className="h-5 w-5" />
+                          Yo'qlama ({format(today, 'MMMM yyyy')})
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ScrollArea className="w-full">
+                      <div className="overflow-x-auto">
+                          <Table className="min-w-full w-max">
+                              <TableHeader>
+                                  <TableRow>
+                                      {monthDays.map(day => {
+                                          const date = new Date(currentYear, currentMonth, day);
+                                          return (
+                                              <TableHead key={day} className="text-center p-2 min-w-[60px]">
+                                                  <div className="text-xs text-muted-foreground">{format(date, 'EEE')}</div>
+                                                  <div>{day}</div>
+                                              </TableHead>
+                                          )
+                                      })}
+                                  </TableRow>
+                              </TableHeader>
+                              <TableBody>
                                 <TableRow>
-                                    {monthDays.map(day => {
-                                        const date = new Date(currentYear, currentMonth, day);
-                                        return (
-                                            <TableHead key={day} className="text-center p-2 min-w-[60px]">
-                                                <div className="text-xs text-muted-foreground">{format(date, 'EEE')}</div>
-                                                <div>{day}</div>
-                                            </TableHead>
-                                        )
-                                    })}
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                               <TableRow>
-                                    {monthDays.map(day => {
-                                        const hours = attendanceMap.get(day);
-                                        return (
-                                            <TableCell key={day} className="text-center p-2">
-                                                {hours !== undefined ? (
-                                                    <Badge variant="default" className="bg-green-600 text-white w-8 h-8 flex items-center justify-center">
-                                                        {hours}
-                                                    </Badge>
-                                                ) : (
-                                                    <span className="text-muted-foreground">-</span>
-                                                )}
-                                            </TableCell>
-                                        )
-                                    })}
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                     </div>
-                   </ScrollArea>
-                </CardContent>
-            </Card>
-        )}
+                                      {monthDays.map(day => {
+                                          const hours = attendanceMap.get(day);
+                                          return (
+                                              <TableCell key={day} className="text-center p-2">
+                                                  {hours !== undefined ? (
+                                                      <Badge variant="default" className="bg-green-600 text-white w-8 h-8 flex items-center justify-center">
+                                                          {hours}
+                                                      </Badge>
+                                                  ) : (
+                                                      <span className="text-muted-foreground">-</span>
+                                                  )}
+                                              </TableCell>
+                                          )
+                                      })}
+                                  </TableRow>
+                              </TableBody>
+                          </Table>
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+              </Card>
+          )}
 
-        {staffMember.workSchedule && (
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                        <CalendarCheck className="h-5 w-5" />
-                        Haftalik ish jadvali
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                     <Table>
-                        <TableHeader>
-                            <TableRow>
-                            <TableHead>Hafta kuni</TableHead>
-                            <TableHead className="text-right">Ish soati</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                           {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => {
-                                const schedule = staffMember.workSchedule?.find(ws => ws.day === day);
-                                return (
-                                    <TableRow key={day} className={!schedule?.isWorkingDay ? 'text-muted-foreground' : ''}>
-                                        <TableCell>{day}</TableCell>
-                                        <TableCell className="text-right font-bold">
-                                            {schedule?.isWorkingDay ? `${schedule.hours} soat` : "Dam olish kuni"}
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                           })}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-        )}
-    </div>
+          {staffMember.workSchedule && (
+              <Card>
+                  <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                          <CalendarCheck className="h-5 w-5" />
+                          Haftalik ish jadvali
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                      <Table>
+                          <TableHeader>
+                              <TableRow>
+                              <TableHead>Hafta kuni</TableHead>
+                              <TableHead className="text-right">Ish soati</TableHead>
+                              </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => {
+                                  const schedule = staffMember.workSchedule?.find(ws => ws.day === day);
+                                  return (
+                                      <TableRow key={day} className={!schedule?.isWorkingDay ? 'text-muted-foreground' : ''}>
+                                          <TableCell>{day}</TableCell>
+                                          <TableCell className="text-right font-bold">
+                                              {schedule?.isWorkingDay ? `${schedule.hours} soat` : "Dam olish kuni"}
+                                          </TableCell>
+                                      </TableRow>
+                                  )
+                            })}
+                          </TableBody>
+                      </Table>
+                  </CardContent>
+              </Card>
+          )}
+      </div>
     </div>
   );
 }

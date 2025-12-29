@@ -109,7 +109,7 @@ export function AddTestResultDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Test Result</DialogTitle>
           <DialogDescription>
@@ -118,7 +118,7 @@ export function AddTestResultDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <Label htmlFor="month">Month</Label>
                      <Select onValueChange={(val) => setValue("month", val)} defaultValue={months[new Date().getMonth()]}>
@@ -150,7 +150,7 @@ export function AddTestResultDialog({
                         <div className="space-y-4">
                         {fields.map((field, index) => (
                             <div key={field.id} className="grid grid-cols-3 items-center gap-4">
-                                <Label className="col-span-2">{field.studentName}</Label>
+                                <Label className="col-span-2 truncate">{field.studentName}</Label>
                                 <Input 
                                     type="number"
                                     {...register(`results.${index}.score`)}

@@ -77,13 +77,14 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="hidden md:inline-flex"
           >
             Grade
             <ChevronsUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
-      cell: ({ row }) => <div className="text-center">{row.getValue('grade')}</div>,
+      cell: ({ row }) => <div className="text-center hidden md:block">{row.getValue('grade')}</div>,
     },
     {
       accessorKey: 'balance',
@@ -115,20 +116,22 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
     },
     {
       accessorKey: 'monthlyFee',
-      header: () => <div className="text-right">Monthly Fee</div>,
+      header: () => <div className="text-right hidden sm:table-cell">Monthly Fee</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue('monthlyFee'));
         const formatted = amount.toLocaleString() + " so'm";
-        return <div className="text-right font-medium">{formatted}</div>;
+        return <div className="text-right font-medium hidden sm:table-cell">{formatted}</div>;
       },
     },
      {
       accessorKey: 'isArchived',
-      header: 'Status',
+      header: () => <div className="hidden lg:table-cell">Status</div>,
       cell: ({ row }) => (
-        <Badge variant={row.getValue('isArchived') ? 'outline' : 'secondary'}>
-          {row.getValue('isArchived') ? 'Archived' : 'Active'}
-        </Badge>
+        <div className="hidden lg:table-cell">
+            <Badge variant={row.getValue('isArchived') ? 'outline' : 'secondary'}>
+            {row.getValue('isArchived') ? 'Archived' : 'Active'}
+            </Badge>
+        </div>
       ),
       filterFn: (row, id, value) => {
         return value === row.getValue(id)
@@ -156,8 +159,39 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    grade: false,
+    monthlyFee: false,
+    isArchived: false,
+  });
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  React.useEffect(() => {
+    if (isMobile) {
+      setColumnVisibility({
+        grade: false,
+        monthlyFee: false,
+        isArchived: false,
+      });
+    } else {
+        setColumnVisibility({
+            grade: true,
+            monthlyFee: true,
+            isArchived: true,
+        });
+    }
+  }, [isMobile]);
   
   const uniqueGrades = React.useMemo(() => {
     const grades = new Set(data.map(student => student.grade));
@@ -190,45 +224,47 @@ export function StudentTable({ data, onMakePayment, onEdit, onArchive, onDelete,
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4 gap-2">
+      <div className="flex items-center py-4 gap-2 flex-wrap">
         <Input
           placeholder="Filter students..."
           value={(table.getColumn('fullName')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('fullName')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-full sm:max-w-xs"
         />
-        <Select
-            value={(table.getColumn('grade')?.getFilterValue() as string) ?? 'all'}
-            onValueChange={(value) => {
-                const filterValue = value === 'all' ? undefined : value;
-                table.getColumn('grade')?.setFilterValue(filterValue);
-            }}
-        >
-            <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by Grade" />
-            </SelectTrigger>
-            <SelectContent>
-                 <SelectItem value="all">All Grades</SelectItem>
-                {uniqueGrades.map(grade => (
-                    <SelectItem key={grade} value={String(grade)}>{grade}-sinf</SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
-         <Select
-            value={(table.getColumn('isArchived')?.getFilterValue() as string) ?? 'all'}
-            onValueChange={(value) => table.getColumn('isArchived')?.setFilterValue(value === 'all' ? undefined : (value === 'active' ? false : true))}
-        >
-            <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by Status" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-        </Select>
+        <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+            <Select
+                value={(table.getColumn('grade')?.getFilterValue() as string) ?? 'all'}
+                onValueChange={(value) => {
+                    const filterValue = value === 'all' ? undefined : value;
+                    table.getColumn('grade')?.setFilterValue(filterValue);
+                }}
+            >
+                <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter by Grade" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Grades</SelectItem>
+                    {uniqueGrades.map(grade => (
+                        <SelectItem key={grade} value={String(grade)}>{grade}-sinf</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <Select
+                value={(table.getColumn('isArchived')?.getFilterValue() as string) ?? 'all'}
+                onValueChange={(value) => table.getColumn('isArchived')?.setFilterValue(value === 'all' ? undefined : (value === 'active' ? false : true))}
+            >
+                <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter by Status" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

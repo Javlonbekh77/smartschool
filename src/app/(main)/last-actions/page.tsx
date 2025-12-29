@@ -45,11 +45,11 @@ export default function LastActionsPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[60vh]">
+        <ScrollArea className="h-[calc(100vh-20rem)]">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Sana</TableHead>
+                <TableHead className="hidden md:table-cell">Sana</TableHead>
                 <TableHead>Foydalanuvchi</TableHead>
                 <TableHead>Amal</TableHead>
                 <TableHead>Tafsilotlar</TableHead>
@@ -59,14 +59,19 @@ export default function LastActionsPage() {
               {sortedLogs.length > 0 ? (
                 sortedLogs.map((log) => (
                   <TableRow key={log.id}>
-                    <TableCell className="font-medium whitespace-nowrap">
+                    <TableCell className="font-medium whitespace-nowrap hidden md:table-cell">
                       {format(new Date(log.timestamp), "yyyy-MM-dd HH:mm:ss")}
                     </TableCell>
                     <TableCell>{log.adminUsername}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{log.action.replace(/_/g, ' ')}</Badge>
                     </TableCell>
-                    <TableCell>{log.details}</TableCell>
+                    <TableCell>
+                        <div className="md:hidden text-xs text-muted-foreground">
+                            {format(new Date(log.timestamp), "yy-MM-dd HH:mm")}
+                        </div>
+                        {log.details}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (

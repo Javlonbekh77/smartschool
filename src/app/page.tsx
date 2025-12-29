@@ -53,7 +53,7 @@ export default function RootPage() {
                   {t('landing.subheadline')}
                 </p>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 mt-4">
                 <Button asChild size="lg">
                   <Link href="/login">
                     {t('landing.cta')}
@@ -64,7 +64,7 @@ export default function RootPage() {
             </div>
             <div className="mt-12 mx-auto max-w-5xl">
                 <Image
-                    src="https://picsum.photos/seed/123/1200/600"
+                    src="https://picsum.photos/seed/modern-library/1200/600"
                     alt="Modern Library"
                     width={1200}
                     height={600}

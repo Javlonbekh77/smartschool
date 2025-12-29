@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { PlusCircle, Upload, Download } from 'lucide-react';
+import { PlusCircle, Upload, Download, MoreHorizontal } from 'lucide-react';
 import { StudentTable } from '@/components/students/student-table';
 import { STUDENTS as initialStudents, PAYMENTS as initialPayments, AUDIT_LOGS as initialAuditLogs } from '@/lib/data';
 import type { Student, Payment, AuditLog } from '@/lib/types';
@@ -19,6 +19,7 @@ import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { useI18n } from '@/context/i18n';
 import { useAuth } from '@/context/auth';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
 export default function StudentsPage() {
   const { t } = useI18n();
@@ -184,24 +185,38 @@ export default function StudentsPage() {
             {user?.role === 'admin' && (
               <div className="ml-auto flex items-center gap-2">
                 <input type="file" ref={fileInputRef} onChange={handleFileImport} className="hidden" accept=".json" />
-                <Button size="sm" variant="outline" className="gap-1" onClick={handleImportClick}>
-                  <Upload className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Import
-                  </span>
-                </Button>
-                 <Button size="sm" variant="outline" className="gap-1" onClick={handleExport}>
-                  <Download className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Export
-                  </span>
-                </Button>
+                <div className="hidden sm:flex items-center gap-2">
+                    <Button size="sm" variant="outline" className="gap-1" onClick={handleImportClick}>
+                        <Upload className="h-3.5 w-3.5" />
+                        <span>Import</span>
+                    </Button>
+                    <Button size="sm" variant="outline" className="gap-1" onClick={handleExport}>
+                        <Download className="h-3.5 w-3.5" />
+                        <span>Export</span>
+                    </Button>
+                </div>
                 <Button size="sm" className="gap-1" onClick={() => openDialog('add')}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                     {t('students.addStudent')}
                   </span>
                 </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline" className="sm:hidden h-9 w-9">
+                            <MoreHorizontal className="h-4 w-4"/>
+                            <span className="sr-only">More actions</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={handleImportClick}>
+                            <Upload className="mr-2 h-4 w-4" /> Import
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleExport}>
+                            <Download className="mr-2 h-4 w-4" /> Export
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
           </div>

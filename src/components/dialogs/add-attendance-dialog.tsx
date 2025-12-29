@@ -122,7 +122,7 @@ export function AddAttendanceDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add Attendance Record (Hourly Staff)</DialogTitle>
           <DialogDescription>
@@ -131,17 +131,16 @@ export function AddAttendanceDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date" className="text-right">
+            <div className="grid items-center gap-2">
+              <Label htmlFor="date">
                 Date
               </Label>
               <Input
                 id="date"
                 type="date"
                 {...register("date")}
-                className="col-span-3"
               />
-              {errors.date && <p className="col-span-4 text-sm text-red-500 text-right">{errors.date.message}</p>}
+              {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
             </div>
 
             <ScrollArea className="h-72 mt-4 border rounded-md">
@@ -171,7 +170,7 @@ export function AddAttendanceDialog({
                       ))}
                     </div>
                  ) : (
-                    <div className="flex h-full items-center justify-center text-muted-foreground">
+                    <div className="flex h-full items-center justify-center text-muted-foreground text-center p-4">
                         <p>No hourly staff scheduled to work on this date.</p>
                     </div>
                  )}
